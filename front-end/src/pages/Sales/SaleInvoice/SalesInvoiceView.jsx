@@ -366,10 +366,10 @@ const SalesInvoiceView = ({onBooleanChange, idFlagView}) => {
                                 >
                                     <Box
                                         sx={{
+                                            marginBottom: '2px',
                                             display: 'flex',
                                             justifyContent: 'center',
                                             alignItems: 'center',
-                                            height: '10vh',  // Makes sure the box takes full height of the viewport
                                         }}
                                     >
                                         <Typography variant="h4">GST INVOICE</Typography>
