@@ -40,6 +40,7 @@ import AllTransactions from "./pages/Dashboard/AllTransactions";
 import MultiStepForm from "./pages/AppStartUp/MultiStepForm.";
 import Invoice from "./pages/InvoiceSettings/Invoice";
 import InvoiceGenerator from "./pages/InvoiceSettings/InvoiceGenerator";
+import PrintableComponent from "./pages/InvoiceSettings/PrintableComponent";
 
 export const AppContent = ({flag, handleBooleanChange, setFlag}) => {
     const [sidebarType, setSidebarType] = useState('default');
@@ -96,7 +97,7 @@ export const AppContent = ({flag, handleBooleanChange, setFlag}) => {
             <Route path="/settings/pricing" element={<Pricing/>}/>
             <Route path="/settings/help/support" element={<HelpSupport/>}/>
             <Route path="/settings/feedback" element={<Feedback/>}/>
-            <Route path="/settings/test" element={<InvoiceGenerator/>}/>
+            <Route path="/settings/test" element={<PrintableComponent/>}/>
 
             <Route path="/logout" element={<Logout setFlag={setFlag}/>}/>
 

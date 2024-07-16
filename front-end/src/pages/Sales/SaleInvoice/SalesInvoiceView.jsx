@@ -361,12 +361,11 @@ const SalesInvoiceView = ({onBooleanChange, idFlagView}) => {
                                     sx={{
                                         backgroundColor:
                                             theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-                                        padding: theme.spacing(5),
+                                        padding: theme.spacing(1),
                                     }}
                                 >
                                     <Box
                                         sx={{
-                                            marginBottom: '2px',
                                             display: 'flex',
                                             justifyContent: 'center',
                                             alignItems: 'center',
@@ -377,14 +376,19 @@ const SalesInvoiceView = ({onBooleanChange, idFlagView}) => {
                                     <Box>
                                         <Box>
                                             <Box sx={{display: "flex", margin: "5px"}}>
-                                                <Box sx={{width: "50%", border: '1px solid black'}}>
-                                                    <Box sx={{margin: "20px"}}>
-                                                        <Box sx={{color: "#000000", display: "flex"}}>
-                                                            <Typography>{primaryBusiness.businessName}</Typography>
+                                                <Box sx={{width: "50%", border: '5px solid #1976D2'}}>
+                                                    <Box sx={{margin: "5px"}}>
+                                                        <Box sx={{color: "#000000",  display: 'flex',
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center',}}>
+                                                            <Typography
+                                                                style={{fontSize: '14px'}}>{primaryBusiness.businessName}</Typography>
                                                         </Box>
-                                                        <Box sx={{color: "#000000", display: "flex"}}>
+                                                        <Box sx={{color: "#000000",  display: 'flex',
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center'}}>
                                                             {primaryBusiness.billingAddress && (
-                                                                <Typography>
+                                                                <Typography style={{fontSize: '14px'}}>
                                                                     {primaryBusiness.billingAddress}
                                                                     {primaryBusiness.city && `, ${primaryBusiness.city}`}
                                                                     {primaryBusiness.district && `, ${primaryBusiness.district}`}
@@ -394,31 +398,52 @@ const SalesInvoiceView = ({onBooleanChange, idFlagView}) => {
                                                             )}
                                                         </Box>
                                                         <Box sx={{color: "#000000", display: "flex"}}>
-                                                            <Typography>Mobile :</Typography>
-                                                            <Typography> {primaryBusiness.phoneNumber}</Typography>
+                                                            <Typography style={{fontSize: '14px'}}>Mobile :</Typography>
+                                                            <Typography
+                                                                style={{fontSize: '14px'}}> {primaryBusiness.phoneNumber}</Typography>
                                                         </Box>
                                                         <Box sx={{color: "#000000", display: "flex"}}>
-                                                            <Typography>GST :</Typography>
-                                                            <Typography>{filterSalePurchase.gstNumber}</Typography>
+                                                            <Typography style={{fontSize: '14px'}}> GST :</Typography>
+                                                            <Typography
+                                                                style={{fontSize: '14px'}}>{filterSalePurchase.gstNumber}</Typography>
+                                                        </Box>
+                                                        <Box sx={{color: "#000000", display: "flex"}}>
+                                                            <Typography style={{fontSize: '14px'}}>Email :</Typography>
+                                                            <Typography
+                                                                style={{fontSize: '14px'}}>{filterSalePurchase.email}</Typography>
                                                         </Box>
                                                     </Box>
                                                 </Box>
                                                 <Box sx={{width: "50%", border: '1px solid black'}}>
-                                                    <Box sx={{margin: "20px"}}>
+                                                    <Box sx={{margin: "5px"}}>
                                                         <Box sx={{color: "#000000", display: "flex"}}>
-                                                            <Typography>  {filterSalePurchase.partyName}</Typography>
+                                                            <Typography
+                                                                style={{fontSize: '14px'}}>  {filterSalePurchase.partyName}</Typography>
                                                         </Box>
                                                         <Box sx={{color: "#000000", display: "flex"}}>
-                                                            <Typography>  {filterSalePurchase.partyBillingAddress}</Typography>
+                                                            <Typography style={{fontSize: '14px'}}>Bill To
+                                                                :</Typography>
+                                                            <Typography
+                                                                style={{fontSize: '14px'}}>  {filterSalePurchase.partyBillingAddress}</Typography>
                                                         </Box>
                                                         <Box sx={{color: "#000000", display: "flex"}}>
-                                                            <Typography>Mobile :</Typography>
-                                                            <Typography>{filterSalePurchase.partyPhone}</Typography>
+                                                            <Typography style={{fontSize: '14px'}}>Ship To
+                                                                :</Typography>
+                                                            <Typography
+                                                                style={{fontSize: '14px'}}>  {filterSalePurchase.partyShippingAddress}</Typography>
+                                                        </Box>
+
+                                                        <Box sx={{color: "#000000", display: "flex"}}>
+                                                            <Typography style={{fontSize: '14px'}}>Mobile :</Typography>
+                                                            <Typography
+                                                                style={{fontSize: '14px'}}>{filterSalePurchase.partyPhone}</Typography>
                                                         </Box>
                                                         <Box sx={{color: "#000000", display: "flex"}}>
-                                                            <Typography>GST :</Typography>
-                                                            <Typography>{filterSalePurchase.partyGst}</Typography>
+                                                            <Typography style={{fontSize: '14px'}}>GST :</Typography>
+                                                            <Typography
+                                                                style={{fontSize: '14px'}}>{filterSalePurchase.partyGst}</Typography>
                                                         </Box>
+
                                                     </Box>
                                                 </Box>
                                             </Box>
@@ -426,18 +451,20 @@ const SalesInvoiceView = ({onBooleanChange, idFlagView}) => {
                                         <Box sx={{margin: "5px"}}>
                                             <Box sx={{display: "flex"}}>
                                                 <Box sx={{width: "50%", border: '1px solid black'}}>
-                                                    <Box sx={{margin: "20px"}}>
+                                                    <Box sx={{margin: "5px"}}>
                                                         <Box sx={{color: "#000000", display: "flex"}}>
-                                                            <Typography>Cosmetice Name</Typography>
+                                                            <Typography style={{fontSize: '14px'}}>Cosmetice
+                                                                Name</Typography>
                                                         </Box>
                                                         <Box sx={{color: "#000000", display: "flex"}}>
-                                                            <Typography>Mobile :</Typography>
-                                                            <Typography>8340719781</Typography>
+                                                            <Typography style={{fontSize: '14px'}}>Mobile :</Typography>
+                                                            <Typography
+                                                                style={{fontSize: '14px'}}>8340719781</Typography>
                                                         </Box>
                                                     </Box>
                                                 </Box>
                                                 <Box sx={{width: "50%", border: '1px solid black'}}>
-                                                    <Box sx={{margin: "20px"}}>
+                                                    <Box sx={{margin: "5px"}}>
                                                         <Box
                                                             sx={{
                                                                 display: "flex",
@@ -445,13 +472,14 @@ const SalesInvoiceView = ({onBooleanChange, idFlagView}) => {
                                                                 margin: "2px",
                                                             }}
                                                         >
-                                                            <Typography>BILL OF SUPPLY</Typography>
+                                                            <Typography style={{fontSize: '14px'}}>BILL OF
+                                                                SUPPLY</Typography>
                                                             <Typography>:</Typography>
-                                                            <Typography
-                                                                sx={{
-                                                                    border: "1px solid black",
-                                                                    padding: "5px",
-                                                                }}
+                                                            <Typography style={{fontSize: '14px'}}
+                                                                        sx={{
+                                                                            border: "1px solid black",
+                                                                            padding: "5px",
+                                                                        }}
                                                             >
                                                                 Original for Recipient
                                                             </Typography>
@@ -463,8 +491,9 @@ const SalesInvoiceView = ({onBooleanChange, idFlagView}) => {
                                                                 margin: "2px",
                                                             }}
                                                         >
-                                                            <Typography variant="h7">Invoice No.</Typography>
-                                                            <Typography variant="body2">
+                                                            <Typography variant="h7" style={{fontSize: '14px'}}>Invoice
+                                                                No.</Typography>
+                                                            <Typography variant="body2" style={{fontSize: '14px'}}>
                                                                 {filterSalePurchase.id}
                                                             </Typography>
                                                         </Box>
@@ -475,8 +504,9 @@ const SalesInvoiceView = ({onBooleanChange, idFlagView}) => {
                                                                 margin: "2px",
                                                             }}
                                                         >
-                                                            <Typography variant="h7">Invoice Date</Typography>
-                                                            <Typography variant="body2">
+                                                            <Typography variant="h7" style={{fontSize: '14px'}}>Invoice
+                                                                Date</Typography>
+                                                            <Typography variant="body2" style={{fontSize: '14px'}}>
                                                                 {formatDate(filterSalePurchase.salesInvoiceDate)}
                                                             </Typography>
                                                         </Box>
@@ -487,8 +517,9 @@ const SalesInvoiceView = ({onBooleanChange, idFlagView}) => {
                                                                 margin: "2px",
                                                             }}
                                                         >
-                                                            <Typography variant="h7">Due Date</Typography>
-                                                            <Typography variant="body2">
+                                                            <Typography variant="h7" style={{fontSize: '14px'}}>Due
+                                                                Date</Typography>
+                                                            <Typography variant="body2" style={{fontSize: '14px'}}>
                                                                 {formatDate(filterSalePurchase.salesDueDate)}
                                                             </Typography>
                                                         </Box>
@@ -500,7 +531,7 @@ const SalesInvoiceView = ({onBooleanChange, idFlagView}) => {
                                             <Box>
                                                 <TableContainer
                                                     component={Paper}
-                                                    sx={{maxHeight: 300, minHeight: 300}}
+                                                    sx={{maxHeight: 220, minHeight: 220}}
                                                 >
                                                     <Table
                                                         sx={{minWidth: 130}}
@@ -512,29 +543,44 @@ const SalesInvoiceView = ({onBooleanChange, idFlagView}) => {
                                                                 <StyledTableCellTableView
                                                                     align="center"
                                                                     width="2%"
-                                                                >
-                                                                    S.NO.
+                                                                > S.NO.
                                                                 </StyledTableCellTableView>
                                                                 <StyledTableCellTableView
                                                                     align="center"
                                                                     width="20%"
-                                                                >
-                                                                    ITEMS
+                                                                >ITEMS
                                                                 </StyledTableCellTableView>
                                                                 <StyledTableCellTableView
                                                                     align="center"
-                                                                    width="20%">HSN</StyledTableCellTableView>
-                                                                <StyledTableCellTableView align="center"
-                                                                                          width="20%">BATCH</StyledTableCellTableView>
+                                                                    width="20%"
+                                                                >HSN
+                                                                </StyledTableCellTableView>
                                                                 <StyledTableCellTableView
-                                                                    align="center">EXP</StyledTableCellTableView>
+                                                                    align="center"
+                                                                    width="20%"
+                                                                >BATCH
+                                                                </StyledTableCellTableView>
+                                                                <StyledTableCellTableView
+                                                                    align="center"
+                                                                    width="20%">EXP</StyledTableCellTableView>
                                                                 <StyledTableCellTableView align="center"
                                                                                           width="20%">PACK</StyledTableCellTableView>
                                                                 <StyledTableCellTableView
                                                                     align="center"
                                                                     width="20%"
+                                                                >QTY
+                                                                </StyledTableCellTableView>
+                                                                <StyledTableCellTableView
+                                                                    align="center"
+                                                                    width="20%"
                                                                 >
-                                                                    QTY.
+                                                                    MRP
+                                                                </StyledTableCellTableView>
+                                                                <StyledTableCellTableView
+                                                                    align="center"
+                                                                    width="20%"
+                                                                >
+                                                                    DIS
                                                                 </StyledTableCellTableView>
                                                                 <StyledTableCellTableView
                                                                     align="center"
@@ -546,7 +592,13 @@ const SalesInvoiceView = ({onBooleanChange, idFlagView}) => {
                                                                     align="center"
                                                                     width="20%"
                                                                 >
-                                                                    TAX
+                                                                    CGST
+                                                                </StyledTableCellTableView>
+                                                                <StyledTableCellTableView
+                                                                    align="center"
+                                                                    width="20%"
+                                                                >
+                                                                    SGST
                                                                 </StyledTableCellTableView>
                                                                 <StyledTableCellTableView
                                                                     align="center"
@@ -559,33 +611,53 @@ const SalesInvoiceView = ({onBooleanChange, idFlagView}) => {
                                                         <TableBody>
                                                             {filteredEmployees.map((row) => (
                                                                 <StyledTableRow key={row.id}>
-                                                                    <TableCell align="center">
+                                                                    <TableCell align="center"
+                                                                               style={{fontSize: '10px'}}>
                                                                         {row.id}
                                                                     </TableCell>
-                                                                    <TableCell align="center">
+                                                                    <TableCell align="center"
+                                                                               style={{fontSize: '10px'}}>
                                                                         {row.item}
                                                                     </TableCell>
-                                                                    <TableCell align="center">
+                                                                    <TableCell align="center"
+                                                                               style={{fontSize: '10px'}}>
                                                                         {row.hsn}
-                                                                    </TableCell> <TableCell align="center">
+                                                                    </TableCell> <TableCell align="center"
+                                                                                            style={{fontSize: '10px'}}>
                                                                     {row.batchNo}
-                                                                </TableCell> <TableCell align="center">
+                                                                </TableCell> <TableCell align="center"
+                                                                                        style={{fontSize: '10px'}}>
                                                                     {row.expireDate}
-                                                                </TableCell> <TableCell align="center">
+                                                                </TableCell> <TableCell align="center"
+                                                                                        style={{fontSize: '10px'}}>
                                                                     {row.packageItems}
                                                                 </TableCell>
-
-
-                                                                    <TableCell align="center">
+                                                                    <TableCell align="center"
+                                                                               style={{fontSize: '10px'}}>
                                                                         {row.quantity}
                                                                     </TableCell>
-                                                                    <TableCell align="center">
+                                                                    <TableCell align="center"
+                                                                               style={{fontSize: '10px'}}>
+                                                                        {row.mrp}
+                                                                    </TableCell>
+                                                                    <TableCell align="center"
+                                                                               style={{fontSize: '10px'}}>
+                                                                        {row.discount}
+                                                                    </TableCell>
+                                                                    <TableCell align="center"
+                                                                               style={{fontSize: '10px'}}>
                                                                         {row.actualSalePrice}
                                                                     </TableCell>
-                                                                    <TableCell align="center">
-                                                                        {row.gst}
+                                                                    <TableCell align="center"
+                                                                               style={{fontSize: '10px'}}>
+                                                                        {row.gst > 0 ? row.gst / 2 : 'N/A'}
                                                                     </TableCell>
-                                                                    <TableCell align="center">
+                                                                    <TableCell align="center"
+                                                                               style={{fontSize: '10px'}}>
+                                                                        {row.gst > 0 ? row.gst / 2 : 'N/A'}
+                                                                    </TableCell>
+                                                                    <TableCell align="center"
+                                                                               style={{fontSize: '10px'}}>
                                                                         {row.total}
                                                                     </TableCell>
                                                                 </StyledTableRow>
@@ -607,7 +679,7 @@ const SalesInvoiceView = ({onBooleanChange, idFlagView}) => {
                                                                     align="center"
                                                                     width="20%"
                                                                 >
-                                                                    TOTAL
+                                                                    SUB TOTAL
                                                                 </StyledTableCellTableView>
                                                                 <StyledTableCellTableView
                                                                     align="center"

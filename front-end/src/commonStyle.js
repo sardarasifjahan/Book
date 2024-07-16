@@ -53,6 +53,7 @@ export const StyledTableCellTableView = styled(TableCell)(({theme}) => ({
         backgroundColor: "#E2E2E2", // Updated color
         color: theme.palette.common.black,
         fontWeight: "bold", // Apply bold font weight
+        fontSize:10,
     },
     [`&.${tableCellClasses.body}`]: {
         fontSize: 8,
