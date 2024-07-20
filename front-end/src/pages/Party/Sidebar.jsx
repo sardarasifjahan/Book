@@ -1,20 +1,38 @@
 import React from 'react';
-import { List, ListItem, ListItemText } from '@mui/material';
+import {Avatar, List, ListItem, ListItemAvatar, ListItemText, TextField} from '@mui/material';
 
-const Sidebar = ({ parties, onPartySelect, selectedParty }) => {
+const Sidebar = ({partyUser, onPartySelect, selectedParty, searchTerm, onSearchChange, onPartySelectName}) => {
     return (
-        <List>
-            {parties.map((party) => (
-                <ListItem
-                    button
-                    key={party.name}
-                    selected={selectedParty === party.name}
-                    onClick={() => onPartySelect(party.name)}
-                >
-                    <ListItemText primary={party.name} secondary={`₹${party.amount}`} />
-                </ListItem>
-            ))}
-        </List>
+        <div>
+            <TextField
+                label="Search Party"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                value={searchTerm}
+                onChange={onSearchChange}
+            />
+            <List>
+                {partyUser
+                    .filter(party => party.pname.toLowerCase().includes(searchTerm.toLowerCase()))
+                    .map((party) => (
+                        <ListItem
+                            button
+                            key={party.pname}
+                            selected={selectedParty === party.pname}
+                            onClick={() => {
+                                onPartySelect(party.id);
+                                onPartySelectName(party.pname);
+                            }}
+                        >
+                            <ListItemAvatar>
+                                <Avatar src={party.image}/>
+                            </ListItemAvatar>
+                            <ListItemText primary={party.pname} secondary={`₹${party.amount}`}/>
+                        </ListItem>
+                    ))}
+            </List>
+        </div>
     );
 };
 

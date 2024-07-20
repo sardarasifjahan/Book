@@ -40,33 +40,66 @@ export const businessAccountDataModel = {
 
 export const partnerDataModel = {
     id: "",
-    pname: "", //show
-    mobileNumber: "", //show
+    mobileNumber: "",
     email: "",
-    openingBalance: "", //show
+    openingBalance: "",
     openingBalanceType: "",
-    partyType: "", //customer ya Supllier  //show
+    partyType: "",
     partyCategory: "",
     billingAddress: "",
     shippingAddress: "",
     gstNumber: "",
     creditPeriod: "",
-    creditLimit: "", //show
+    creditLimit: "",
     creditPeriodType: "",
-    loyality: "",
     company: "",
     primary_user_id: "",
-    secondary_user_id: "",
-    creationDateTime: "",
     multipleShippingAddress: [
         {
             id: "",
             address: "",
             city: "",
             state: "",
-            zip: "",
-        },
+            zip: ""
+        }
     ],
+    statementsList: [
+        {
+            id: "",
+            spNo: "",
+            credit: "",
+            debit: "",
+            totalAmount: "",
+            receivedBalance: "",
+            balanceAmount: "",
+            billType: "",
+            creationDateTime: ""
+        }
+    ],
+    itemWiseReportList: [
+        {
+            id: "",
+            spNo: "",
+            itemNo: "",
+            itemName: "",
+            saleIncDec: "",
+            saleQuantity: "",
+            saleAmount: "",
+            creationDateTime: ""
+        }
+    ],
+    transactionsList: [
+        {
+            id: "",
+            spNo: "",
+            amount: "",
+            status: "",
+            transactionType: "",
+            creationDateTime: ""
+        }
+    ],
+    creationDateTime: "",
+    pname: ""
 };
 export const InventoryDataModel = {
     id: "",

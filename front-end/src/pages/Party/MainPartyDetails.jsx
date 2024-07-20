@@ -1,23 +1,22 @@
-import React, {useEffect, useState} from 'react';
-import {Box, Button, CssBaseline, Grid, Paper, Tab, Tabs, Typography} from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Button, CssBaseline, Grid, Paper, Tab, Tabs, Typography } from '@mui/material';
 import Sidebar from './Sidebar';
 import PartyDetails from './PartyDetails';
 import PartyLedger from './PartyLedger';
 import PartyTransactions from './PartyTransactions';
+import {useSelector} from "react-redux";
 
-
-export const MainPartyDetails = ({detailFlagId, onBooleanChange}) => {
+export  const MainPartyDetails = ({ detailFlagId, onBooleanChange }) => {
+    const {partyUser} = useSelector((state) => state.partyReducerValue);
     useEffect(() => {
         console.log("Details Flag Id ", detailFlagId);
-        console.log("On Booolean CHange", onBooleanChange);
+        console.log("On Boolean Change", onBooleanChange);
     }, []);
+
     const [selectedParty, setSelectedParty] = useState('Cash Sale');
+    const [selectedPartyName,setSelectedPartyName] = React.useState('');
     const [tabIndex, setTabIndex] = useState(0);
-    const parties = [
-        {name: 'Cash Sale', amount: 200},
-        {name: 'Raju', amount: 50},
-        {name: 'Sandeep', amount: 200},
-    ];
+    const [searchTerm, setSearchTerm] = useState('');
 
     const handlePartySelect = (party) => {
         setSelectedParty(party);
@@ -27,36 +26,52 @@ export const MainPartyDetails = ({detailFlagId, onBooleanChange}) => {
         setTabIndex(newValue);
     };
 
-    return (<>
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
+    const handleSelectedPartyName=(party)=>{
+        setSelectedPartyName(party);
+    }
+
+    return (
+        <>
             <Box>
                 <Button onClick={onBooleanChange}>Back To View</Button>
             </Box>
-            <CssBaseline/>
+            <CssBaseline />
             <Grid container spacing={2}>
-                <Grid item xs={3}> <Paper elevation={3}>
-                    <Sidebar parties={parties} onPartySelect={handlePartySelect} selectedParty={selectedParty}/>
-                </Paper>
+                <Grid item xs={3}>
+                    <Paper elevation={3}>
+                        <Sidebar
+                            partyUser={partyUser}
+                            onPartySelect={handlePartySelect}
+                            selectedParty={selectedParty}
+                            searchTerm={searchTerm}
+                            onSearchChange={handleSearchChange}
+                            onPartySelectName={handleSelectedPartyName}
+                        />
+                    </Paper>
                 </Grid>
                 <Grid item xs={9}>
-                    <Paper style={{padding: 16}}>
-                        <Typography variant="h5">{selectedParty}</Typography>
+                    <Paper style={{ padding: 16 }}>
+                        <Typography variant="h5">{selectedPartyName}</Typography>
                         <Tabs value={tabIndex} onChange={handleTabChange} aria-label="party tabs">
-                            <Tab label="Transactions"/>
-                            <Tab label="Profile"/>
-                            <Tab label="Ledger"/>
-                            <Tab label="Item Wise ReportReport"/>
+                            <Tab label="Transactions" />
+                            <Tab label="Profile" />
+                            <Tab label="Ledger" />
+                            <Tab label="Item Wise Report" />
                         </Tabs>
                         <TabPanel value={tabIndex} index={0}>
-                            <PartyTransactions partyName={selectedParty}/>
+                            <PartyTransactions partyName={selectedParty} />
                         </TabPanel>
                         <TabPanel value={tabIndex} index={1}>
-                            <PartyDetails partyName={selectedParty}/>
+                            <PartyDetails partyName={selectedParty} />
                         </TabPanel>
                         <TabPanel value={tabIndex} index={2}>
-                            <PartyLedger partyName={selectedParty}/>
+                            <PartyLedger partyName={selectedParty} />
                         </TabPanel>
                         <TabPanel value={tabIndex} index={3}>
-                            <Typography>Item Wise ReportReport</Typography>
+                            <Typography>Item Wise Report</Typography>
                         </TabPanel>
                     </Paper>
                 </Grid>
@@ -66,7 +81,7 @@ export const MainPartyDetails = ({detailFlagId, onBooleanChange}) => {
 };
 
 const TabPanel = (props) => {
-    const {children, value, index, ...other} = props;
+    const { children, value, index, ...other } = props;
 
     return (
         <div
@@ -84,3 +99,4 @@ const TabPanel = (props) => {
         </div>
     );
 };
+

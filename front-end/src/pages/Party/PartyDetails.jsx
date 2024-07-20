@@ -1,57 +1,82 @@
-import React from 'react';
-import { Typography, Grid, Paper } from '@mui/material';
+import React, {useEffect, useState} from 'react';
+import {Grid, Paper, Typography} from '@mui/material';
+import {useSelector} from 'react-redux';
+import InfoIcon from '@mui/icons-material/Info';
+import BusinessIcon from '@mui/icons-material/Business';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import {makeStyles} from '@material-ui/core/styles';
 
-const PartyDetails = ({ partyName }) => {
-    // Here you would fetch and display the Party details based on the selected Party
-    const partyDetails = {
-        'Cash Sale': {
-            mobile: '6299669816',
-            type: 'Customer',
-            category: '',
-            openingBalance: 0,
-            creditPeriod: '0 Days',
-            creditLimit: 0,
-            gstin: '-',
-            pan: '-',
-            billingAddress: '-',
-            shippingAddress: '-',
-        },
-        Raju: {
-            // details for Raju
-        },
-        Sandeep: {
-            // details for Sandeep
-        },
-    }[partyName];
+const useStyles = makeStyles((theme) => ({
+    header: {
+        display: 'flex',
+        alignItems: 'center',
+        color: 'gray',
+        marginBottom: theme.spacing(2),
+    },
+    icon: {
+        marginRight: theme.spacing(1),
+    },
+    paper: {
+        padding: theme.spacing(2),
+        marginBottom: theme.spacing(2),
+    },
+    subtitle: {
+        color: 'gray',
+    }
+}));
+
+const PartyDetails = ({partyName}) => {
+    const classes = useStyles();
+    const {partyUser} = useSelector((state) => state.partyReducerValue);
+    const [partyDetail, setPartyDetail] = useState(null);
+
+    useEffect(() => {
+        const details = partyUser.find(item => item.id === partyName);
+        console.log("Party Details values", details);
+        setPartyDetail(details || null);
+    }, [partyName, partyUser]);
+
+    // If partyDetail is null or undefined, show a loading message or some default content
+    if (!partyDetail) {
+        return <Typography>Loading or No details available</Typography>;
+    }
 
     return (
         <div>
-            <Typography variant="h5">{partyName}</Typography>
             <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
-                    <Paper style={{ padding: 16 }}>
-                        <Typography variant="subtitle1">General Details</Typography>
-                        <Typography variant="body2">Party Name: {partyName}</Typography>
-                        <Typography variant="body2">Mobile Number: {partyDetails.mobile}</Typography>
-                        <Typography variant="body2">Party Type: {partyDetails.type}</Typography>
-                        <Typography variant="body2">Party Category: {partyDetails.category}</Typography>
-                        <Typography variant="body2">Opening Balance: ₹{partyDetails.openingBalance}</Typography>
+                    <Paper className={classes.paper}>
+                        <div className={classes.header}>
+                            <InfoIcon className={classes.icon}/>
+                            <Typography variant="subtitle1" className={classes.subtitle}>General Details</Typography>
+                        </div>
+                        <Typography variant="body2">Party Name: {partyDetail.pname || '-'}</Typography>
+                        <Typography variant="body2">Mobile Number: {partyDetail.mobileNumber || '-'}</Typography>
+                        <Typography variant="body2">Party Type: {partyDetail.type || '-'}</Typography>
+                        <Typography variant="body2">Party Category: {partyDetail.category || '-'}</Typography>
+                        <Typography variant="body2">Opening Balance: ₹{partyDetail.openingBalance || '-'}</Typography>
                     </Paper>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <Paper style={{ padding: 16 }}>
-                        <Typography variant="subtitle1">Business Details</Typography>
-                        <Typography variant="body2">GSTIN: {partyDetails.gstin}</Typography>
-                        <Typography variant="body2">PAN Number: {partyDetails.pan}</Typography>
-                        <Typography variant="body2">Billing Address: {partyDetails.billingAddress}</Typography>
-                        <Typography variant="body2">Shipping Address: {partyDetails.shippingAddress}</Typography>
+                    <Paper className={classes.paper}>
+                        <div className={classes.header}>
+                            <BusinessIcon className={classes.icon}/>
+                            <Typography variant="subtitle1" className={classes.subtitle}>Business Details</Typography>
+                        </div>
+                        <Typography variant="body2">GSTIN: {partyDetail.gstin || '-'}</Typography>
+                        <Typography variant="body2">PAN Number: {partyDetail.pan || '-'}</Typography>
+                        <Typography variant="body2">Billing Address: {partyDetail.billingAddress || '-'}</Typography>
+                        <Typography variant="body2">Shipping Address: {partyDetail.shippingAddress || '-'}</Typography>
                     </Paper>
                 </Grid>
                 <Grid item xs={12}>
-                    <Paper style={{ padding: 16 }}>
-                        <Typography variant="subtitle1">Credit Details</Typography>
-                        <Typography variant="body2">Credit Period: {partyDetails.creditPeriod}</Typography>
-                        <Typography variant="body2">Credit Limit: ₹{partyDetails.creditLimit}</Typography>
+                    <Paper className={classes.paper}>
+                        <div className={classes.header}>
+                            <CreditCardIcon className={classes.icon}/>
+                            <Typography variant="subtitle1" className={classes.subtitle}>Credit Details</Typography>
+                        </div>
+                        <Typography variant="body2">Credit Period: {partyDetail.creditPeriod || '-'}</Typography>
+                        <Typography variant="body2">Credit Limit: ₹{partyDetail.creditLimit || '-'}</Typography>
                     </Paper>
                 </Grid>
             </Grid>
