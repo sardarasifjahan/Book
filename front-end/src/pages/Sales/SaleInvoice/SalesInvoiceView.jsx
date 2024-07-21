@@ -158,7 +158,7 @@ const SalesInvoiceView = ({onBooleanChange, idFlagView}) => {
     const handleDelete = async (event) => {
         event.preventDefault();
         const response = await axios.post(
-            `http://localhost:8700/hesabbook/sale/purchase/delete/${filterSalePurchase.id}`
+            `http://localhost:8080/hesabbook/sale/purchase/delete/${filterSalePurchase.id}`
         );
         dispatch(removeSalePurchase(filterSalePurchase.id));
         console.log("Submit Response :--    ", response.data);
