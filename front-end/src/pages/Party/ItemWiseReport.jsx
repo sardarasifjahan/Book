@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from '@mui/material';
+import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,Box} from '@mui/material';
 import {useSelector} from "react-redux";
 
 const ItemWiseReport = ({partyName}) => {
@@ -32,7 +32,7 @@ const ItemWiseReport = ({partyName}) => {
     }
 
     return (
-        <div>
+        <Box style={{ height: 'calc(100vh - 200px)', overflow: 'auto' }}>
             <TableContainer component={Paper} style={{marginTop: 20}}>
                 <Table>
                     <TableHead>
@@ -67,7 +67,7 @@ const ItemWiseReport = ({partyName}) => {
                     </TableBody>
                 </Table>
             </TableContainer>
-        </div>
+        </Box>
     );
 };
 

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
-    Button,
+    Button,Box,
     FormControl,
     Grid,
     InputLabel,
@@ -51,7 +51,7 @@ const PartyTransactions = ({partyName}) => {
     };
 
     return (
-        <div>
+        <Box style={{ height: 'calc(100vh - 200px)', overflow: 'auto' }}>
             <Grid container justifyContent="space-between" alignItems="center" style={{marginBottom: 16}}>
                 <Typography variant="h6">Transactions</Typography>
                 <Grid item>
@@ -105,7 +105,7 @@ const PartyTransactions = ({partyName}) => {
                     )}
                 </Table>
             </TableContainer>
-        </div>
+        </Box>
     );
 };
 

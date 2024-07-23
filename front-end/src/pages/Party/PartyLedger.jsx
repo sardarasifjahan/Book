@@ -4,7 +4,7 @@ import {
     Grid,
     MenuItem,
     Paper,
-    Select,
+    Select,Box,
     Table,
     TableBody,
     TableCell,
@@ -67,7 +67,7 @@ const PartyLedger = ({ partyName }) => {
     }
 
     return (
-        <div>
+        <Box style={{ height: 'calc(100vh - 200px)', overflow: 'auto' }}>
             <Grid container justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
                 <Select defaultValue="Last 365 Days">
                     <MenuItem value="Last 30 Days">Last 30 Days</MenuItem>
@@ -123,7 +123,7 @@ const PartyLedger = ({ partyName }) => {
                 </Table>
             </TableContainer>
             <Typography variant="h6" gutterBottom>Total Receivable: {totalReceivable}</Typography>
-        </div>
+        </Box>
     );
 };
 

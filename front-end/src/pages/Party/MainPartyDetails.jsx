@@ -42,8 +42,8 @@ export  const MainPartyDetails = ({ detailFlagId, onBooleanChange }) => {
             <CssBaseline />
             <Grid container spacing={2}>
                 <Grid item xs={3}>
-                    <Paper elevation={3}>
-                        <Sidebar
+                    <Paper elevation={3} style={{ height: 'calc(100vh - 64px)', overflow: 'auto' }}>
+                    <Sidebar
                             partyUser={partyUser}
                             onPartySelect={handlePartySelect}
                             selectedParty={selectedParty}
@@ -54,7 +54,7 @@ export  const MainPartyDetails = ({ detailFlagId, onBooleanChange }) => {
                     </Paper>
                 </Grid>
                 <Grid item xs={9}>
-                    <Paper style={{ padding: 16 }}>
+                        <Paper style={{ padding: 16, height: 'calc(100vh - 64px)', overflow: 'auto' }}>
                         <Typography variant="h5">{selectedPartyName}</Typography>
                         <Tabs value={tabIndex} onChange={handleTabChange} aria-label="party tabs">
                             <Tab label="Transactions" />
