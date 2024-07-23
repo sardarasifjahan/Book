@@ -157,7 +157,6 @@ public class SalePurchaseService {
                     itemWiseReport.setPurchaseIncDec();*/
                 });
             }
-
             case CREDIT_NOTE -> {
                 statements.setSpNo(salePurchaseReturn.getId());
                 statements.setBillType(CREDIT_NOTE);
@@ -209,12 +208,112 @@ public class SalePurchaseService {
                 transaction.setAmount(salePurchase.getTotalAmount());
                 transaction.setStatus("NA");
             }
-            case DEBIT_NOTE -> {
-
-            }
             case PURCHASE_RETURN -> {
-
+                statements.setSpNo(salePurchaseReturn.getId());
+                statements.setBillType(PURCHASE_RETURN);
+                statements.setDebit(salePurchase.getTotalAmount());
+                statements.setCredit(salePurchase.getAmountReceived());
+                statements.setReceivedBalance(salePurchase.getAmountReceived());
+                statements.setBalanceAmount(salePurchase.getBalanceAmount());
+                statements.setTotalAmount(salePurchase.getTotalAmount());
+                transaction.setTransactionType(PURCHASE_RETURN);
+                transaction.setSpNo(salePurchaseReturn.getId());
+                transaction.setAmount(salePurchase.getTotalAmount());
+                transaction.setStatus(salePurchase.getStatus());
+                itemWiseReport.setSpNo(salePurchaseReturn.getId());
+                Type inventoryListType = new TypeToken<List<Inventory>>() {
+                }.getType();
+                List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);
+                if (inventoryList == null || inventoryList.isEmpty()) {
+                    System.out.println("Invalid input: inventory list is null or empty");
+                }
+                inventoryList.forEach(x->{
+                    itemWiseReport.setItemNo(x.getId());
+                    itemWiseReport.setItemName(x.getItem());
+                    itemWiseReport.setItemCode(x.getItemCode());
+                    BigDecimal salePrice = new BigDecimal(x.getSalePrice());
+                    BigDecimal saleAmount = salePrice.multiply(new BigDecimal(x.getQuantity()));
+                    itemWiseReport.setPurchaseAmount(String.valueOf(saleAmount)); // Set sale amount
+                    itemWiseReport.setPurchaseQuantity(String.valueOf(x.getQuantity()));
+                    itemWiseReport.setSaleIncDec("-");
+                   /* itemWiseReport.setPurchaseAmount();
+                    itemWiseReport.setPurchaseQuantity();
+                    itemWiseReport.setPurchaseIncDec();*/
+                });
             }
+            case PURCHASE_INVOICE -> {
+                statements.setSpNo(salePurchaseReturn.getId());
+                statements.setBillType(PURCHASE_INVOICE);
+                statements.setDebit(salePurchase.getAmountReceived());
+                statements.setCredit(salePurchase.getTotalAmount());
+                statements.setReceivedBalance(salePurchase.getAmountReceived());
+                statements.setBalanceAmount(salePurchase.getBalanceAmount());
+                statements.setTotalAmount(salePurchase.getTotalAmount());
+                transaction.setTransactionType(PURCHASE_INVOICE);
+                transaction.setSpNo(salePurchaseReturn.getId());
+                transaction.setAmount(salePurchase.getTotalAmount());
+                transaction.setStatus(salePurchase.getStatus());
+                itemWiseReport.setSpNo(salePurchaseReturn.getId());
+                Type inventoryListType = new TypeToken<List<Inventory>>() {
+                }.getType();
+                List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);
+                if (inventoryList == null || inventoryList.isEmpty()) {
+                    System.out.println("Invalid input: inventory list is null or empty");
+                }
+                inventoryList.forEach(x->{
+                    itemWiseReport.setItemNo(x.getId());
+                    itemWiseReport.setItemName(x.getItem());
+                    itemWiseReport.setItemCode(x.getItemCode());
+                    BigDecimal salePrice = new BigDecimal(x.getSalePrice());
+                    BigDecimal saleAmount = salePrice.multiply(new BigDecimal(x.getQuantity()));
+                    itemWiseReport.setPurchaseAmount(String.valueOf(saleAmount)); // Set sale amount
+                    itemWiseReport.setPurchaseQuantity(String.valueOf(x.getQuantity()));
+                    itemWiseReport.setSaleIncDec("-");
+                   /* itemWiseReport.setPurchaseAmount();
+                    itemWiseReport.setPurchaseQuantity();
+                    itemWiseReport.setPurchaseIncDec();*/
+                });
+            }
+            case PURCHASE_ORDER -> {
+                transaction.setTransactionType(PURCHASE_ORDER);
+                transaction.setSpNo(salePurchaseReturn.getId());
+                transaction.setAmount(salePurchase.getTotalAmount());
+                transaction.setStatus("NA");
+            }
+            case DEBIT_NOTE -> {
+                statements.setSpNo(salePurchaseReturn.getId());
+                statements.setBillType(DEBIT_NOTE);
+                statements.setDebit(salePurchase.getTotalAmount());
+                statements.setCredit(salePurchase.getAmountReceived());
+                statements.setReceivedBalance(salePurchase.getAmountReceived());
+                statements.setBalanceAmount(salePurchase.getBalanceAmount());
+                statements.setTotalAmount(salePurchase.getTotalAmount());
+                transaction.setTransactionType(DEBIT_NOTE);
+                transaction.setSpNo(salePurchaseReturn.getId());
+                transaction.setAmount(salePurchase.getTotalAmount());
+                transaction.setStatus(salePurchase.getStatus());
+                itemWiseReport.setSpNo(salePurchaseReturn.getId());
+                Type inventoryListType = new TypeToken<List<Inventory>>() {
+                }.getType();
+                List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);
+                if (inventoryList == null || inventoryList.isEmpty()) {
+                    System.out.println("Invalid input: inventory list is null or empty");
+                }
+                inventoryList.forEach(x->{
+                    itemWiseReport.setItemNo(x.getId());
+                    itemWiseReport.setItemName(x.getItem());
+                    itemWiseReport.setItemCode(x.getItemCode());
+                    BigDecimal salePrice = new BigDecimal(x.getSalePrice());
+                    BigDecimal saleAmount = salePrice.multiply(new BigDecimal(x.getQuantity()));
+                    itemWiseReport.setPurchaseAmount(String.valueOf(saleAmount)); // Set sale amount
+                    itemWiseReport.setPurchaseQuantity(String.valueOf(x.getQuantity()));
+                    itemWiseReport.setSaleIncDec("+");
+                   /* itemWiseReport.setPurchaseAmount();
+                    itemWiseReport.setPurchaseQuantity();
+                    itemWiseReport.setPurchaseIncDec();*/
+                });
+            }
+
         }
 
         CompletableFuture.runAsync(() -> {
