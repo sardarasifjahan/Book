@@ -109,7 +109,7 @@ export const MyBusinessAccount = () => {
     async function handleDelete(id, event) {
         console.log("DELETE ID " + id);
         const response = await axios.post(
-            `http://api.hesabbook.in/hesabbook/business/account/delete/${id}`
+            `http://localhost:8777/hesabbook/business/account/delete/${id}`
         );
         //  fetchAllManageUserData();
         dispatch(removeBusinessUser(id));
@@ -148,7 +148,7 @@ export const MyBusinessAccount = () => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(
-                    "http://api.hesabbook.in/hesabbook/business/account/all"
+                    "http://localhost:8777/hesabbook/business/account/all"
                 );
                 console.log(response.data.response);
                 setMangUser(response.data.response);

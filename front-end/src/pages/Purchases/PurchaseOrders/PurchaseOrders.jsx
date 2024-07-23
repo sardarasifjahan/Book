@@ -124,7 +124,7 @@ export const PurchaseOrders = () => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(
-                    `http://api.hesabbook.in/hesabbook/sale/purchase/all/${loginData.primary_user_id}`
+                    `http://localhost:8777/hesabbook/sale/purchase/all/${loginData.primary_user_id}`
                 );
                 console.log("Party Response ", response.data.response);
                 if (response.data.code === 200) {

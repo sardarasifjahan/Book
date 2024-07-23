@@ -82,7 +82,7 @@ const BusinessSettingsForm = () => {
         event.preventDefault();
         manageUserObj['primary_user_id'] = loginData.primary_user_id;
         manageUserObj['secondary_user_id'] = loginData.secondary_user_id;
-        const response = await axios.post('http://api.hesabbook.in/hesabbook/business/account/save', manageUserObj);
+        const response = await axios.post('http://localhost:8777/hesabbook/business/account/save', manageUserObj);
         addObjectOnTop(response.data.response)
     };
 

@@ -26,11 +26,11 @@ const MultiStepForm = ({onBooleanChange}) => {
         manageUserObj['primary_user_id'] = loginData.primary_user_id;
         manageUserObj['secondary_user_id'] = loginData.secondary_user_id;
         manageUserObj['primaryWithBusiness'] = "Y";
-        const response = await axios.post('http://api.hesabbook.in/hesabbook/business/account/save', manageUserObj);
+        const response = await axios.post('http://localhost:8777/hesabbook/business/account/save', manageUserObj);
         if (response.data.code === 200) {
             dispatch(addPrimaryBusinessUser(response.data.response));
             localStorage.setItem("BusinessName", response.data.response.businessName);
-            const updateLoginValue = await axios.get(`http://api.hesabbook.in/hesabbook/user/update/first/time/${loginData.id}/${response.data.response.id}/Y`);
+            const updateLoginValue = await axios.get(`http://localhost:8777/hesabbook/user/update/first/time/${loginData.id}/${response.data.response.id}/Y`);
             if (updateLoginValue.status === 200) {
                 console.log("return updateLogin value", updateLoginValue);
                 dispatch(addLogin(updateLoginValue.data.response));

@@ -226,7 +226,7 @@ const POSBilling = () => {
         inventoryObject["primary_user_id"] = loginData.primary_user_id;
         inventoryObject["secondary_user_id"] = loginData.secondary_user_id;
         const response = await axios.post(
-            "http://api.hesabbook.in/hesabbook/inventory/save",
+            "http://localhost:8777/hesabbook/inventory/save",
             inventoryObject
         );
         console.log("Submit Response :--    ", response.data);

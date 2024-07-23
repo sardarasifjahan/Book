@@ -93,7 +93,7 @@ const PaymentOutCreate = ({onBooleanChange}) => {
 
         console.log("Sale Purchase Object ", salePurchaseObject);
         const response = await axios.post(
-            "http://api.hesabbook.in/hesabbook/sale/purchase/save",
+            "http://localhost:8777/hesabbook/sale/purchase/save",
             salePurchaseObject
         );
         console.log("Response   ", response);
