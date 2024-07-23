@@ -81,10 +81,14 @@ export const partnerDataModel = {
             id: "",
             spNo: "",
             itemNo: "",
+            itemCode: "",
             itemName: "",
             saleIncDec: "",
             saleQuantity: "",
             saleAmount: "",
+            purchaseIncDec: "",
+            purchaseQuantity: "",
+            purchaseAmount: "",
             creationDateTime: ""
         }
     ],

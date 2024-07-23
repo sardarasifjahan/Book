@@ -5,6 +5,7 @@ import PartyDetails from './PartyDetails';
 import PartyLedger from './PartyLedger';
 import PartyTransactions from './PartyTransactions';
 import {useSelector} from "react-redux";
+import ItemWiseReport from "./ItemWiseReport";
 
 export  const MainPartyDetails = ({ detailFlagId, onBooleanChange }) => {
     const {partyUser} = useSelector((state) => state.partyReducerValue);
@@ -71,7 +72,7 @@ export  const MainPartyDetails = ({ detailFlagId, onBooleanChange }) => {
                             <PartyLedger partyName={selectedParty} />
                         </TabPanel>
                         <TabPanel value={tabIndex} index={3}>
-                            <Typography>Item Wise Report</Typography>
+                            <ItemWiseReport partyName={selectedParty}/>
                         </TabPanel>
                     </Paper>
                 </Grid>

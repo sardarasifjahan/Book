@@ -39,6 +39,7 @@ public class ItemWiseReport implements Serializable {
     private Integer spNo;
     private Integer itemNo;
     private String itemName;
+    private String itemCode;
     private String saleIncDec;
     private String saleQuantity;
     private String saleAmount;

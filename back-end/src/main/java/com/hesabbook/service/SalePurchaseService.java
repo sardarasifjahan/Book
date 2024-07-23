@@ -120,6 +120,7 @@ public class SalePurchaseService {
                 inventoryList.forEach(x->{
                     itemWiseReport.setItemNo(x.getId());
                     itemWiseReport.setItemName(x.getItem());
+                    itemWiseReport.setItemCode(x.getItemCode());
                     BigDecimal salePrice = new BigDecimal(x.getSalePrice());
                     BigDecimal saleAmount = salePrice.multiply(new BigDecimal(x.getQuantity()));
                     itemWiseReport.setSaleAmount(String.valueOf(saleAmount)); // Set sale amount
