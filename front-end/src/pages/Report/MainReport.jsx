@@ -29,7 +29,7 @@ const reportsData = {
     ],
     Item: [
         'Item Batch ReportReport', 'Item ReportReport By Party', 'Item Sales and Purchase Summary',
-        'Low Stock Summary', 'Rate List', 'Stock Detail ReportReport', 'Stock Summary'
+        'Low Items Summary', 'Rate List', 'Items Detail ReportReport', 'Items Summary'
     ],
     Party: [
         'Receivable Ageing ReportReport', 'Party ReportReport By Item', 'Party Statement (Ledger)',

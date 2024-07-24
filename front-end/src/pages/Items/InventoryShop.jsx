@@ -23,7 +23,6 @@ import {useDispatch, useSelector} from "react-redux";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Delete from "@mui/icons-material/Delete";
 import {
-    addExistingInventory,
     addInventory,
     addKeyCategory,
     addKeyCompany,
@@ -60,6 +59,7 @@ export const InventoryShop = () => {
     const [openCompany, setOpenCompany] = React.useState(false);
     const [detailFlag, setDetailFlag] = React.useState(true);
     const [detailFlagId, setDetailFlagId] = React.useState('');
+    const {inventoryUser} = useSelector((state) => state.inventoryReducerValue);
 
     const handleDetailFlag = () => {
         setDetailFlag((prevState) => !prevState);
@@ -113,9 +113,22 @@ export const InventoryShop = () => {
         );
         console.log("Submit Response :--    ", response.data);
         console.log("on Submit :-->", inventoryObject);
-        dispatch(addExistingInventory(response.data.response));
+        // dispatch(addExistingInventory(response.data.response));
+        addObjectOnTop(response.data.response);
         setInventoryObject(InventoryDataModel);
         setEnable((prevState) => !prevState);
+    };
+    const addObjectOnTop = (newObject) => {
+        const existingIndex = inventoryUser.findIndex(item => item.id === newObject.id);
+        if (existingIndex === -1) {
+            setInventory([newObject, ...inventoryUser]);
+            dispatch(addInventory([newObject, ...partyUser]));
+        } else {
+            const updatedArray = [...partyUser];
+            updatedArray[existingIndex] = newObject;
+            setInventory(updatedArray);
+            dispatch(addInventory(updatedArray));
+        }
     };
 
     async function handleDelete(id, event) {
@@ -578,7 +591,7 @@ export const InventoryShop = () => {
                                                         </StyledTableCell>
                                                         <StyledTableCell align="center">
                                                             {row.actualPurchasePrice}
-                                                             </StyledTableCell>
+                                                        </StyledTableCell>
                                                         <StyledTableCell align="center">
                                                             <IconButton
                                                                 aria-label="edit"
