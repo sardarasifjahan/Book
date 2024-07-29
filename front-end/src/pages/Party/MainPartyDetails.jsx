@@ -6,7 +6,7 @@ import PartyLedger from './PartyLedger';
 import PartyTransactions from './PartyTransactions';
 import {useSelector} from "react-redux";
 import ItemWiseReport from "./ItemWiseReport";
-
+import {TabPanel} from "../../commonStyle";
 export  const MainPartyDetails = ({ detailFlagId, onBooleanChange }) => {
     const {partyUser} = useSelector((state) => state.partyReducerValue);
     useEffect(() => {
@@ -78,26 +78,6 @@ export  const MainPartyDetails = ({ detailFlagId, onBooleanChange }) => {
                 </Grid>
             </Grid>
         </>
-    );
-};
-
-const TabPanel = (props) => {
-    const { children, value, index, ...other } = props;
-
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`tabpanel-${index}`}
-            aria-labelledby={`tab-${index}`}
-            {...other}
-        >
-            {value === index && (
-                <Box p={3}>
-                    {children}
-                </Box>
-            )}
-        </div>
     );
 };
 

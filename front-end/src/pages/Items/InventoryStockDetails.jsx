@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 
 
-export const InventoryStockDetails = ({item}) => {
+export const InventoryStockDetails = ({itemCode}) => {
     const transactions = [
         {date: '23-05-2024', type: 'Sales Invoice', quantity: '-2 PCS', invoice: '1', closing: '8 PCS'},
         {date: '22-05-2024', type: 'Opening Items', quantity: '10 PCS', invoice: '-', closing: '10 PCS'},

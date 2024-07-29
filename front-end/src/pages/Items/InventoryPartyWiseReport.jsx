@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 
 
-export const InventoryPartyWiseReport = ({item}) => {
+export const InventoryPartyWiseReport = ({itemCode}) => {
     const reports = [
         {name: 'Raju', salesQuantity: 2, salesAmount: '₹95.24', purchaseQuantity: 0, purchaseAmount: '-'},
     ];

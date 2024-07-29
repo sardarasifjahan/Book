@@ -1,67 +1,87 @@
 import {InventoryItemDetails} from "./InventoryItemDetails";
-import {InventoryStockDetails} from "./InventoryStockDetails"
-import {InventoryPartyWiseReport} from "./InventoryPartyWiseReport"
-import React, {useEffect} from 'react';
-import {Box, Button, Container, Divider, Grid, List, ListItem, ListItemText, Paper, Typography} from '@mui/material';
+import {InventoryPartyWiseReport} from "./InventoryPartyWiseReport";
+import React, {useEffect, useState} from 'react';
+import {Box, Button, Grid, Paper, Typography} from '@mui/material';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-
+import SidebarItems from "./SidebarItems";
+import {useSelector} from "react-redux";
+import {InventoryStockDetails} from "./InventoryStockDetails";
+import {TabPanel} from "../../commonStyle";
 export const MainItemDetails = ({detailFlagId, onBooleanChange}) => {
+    const {inventoryUser} = useSelector((state) => state.inventoryReducerValue);
+
     useEffect(() => {
         console.log("Details Items Flag Id ", detailFlagId);
-        console.log("On Booolean CHange", onBooleanChange);
+        console.log("On Boolean Change", onBooleanChange);
     }, []);
-    const items = [
-        {name: 'Comb', stock: 8},
-        {name: 'Cup', stock: 10},
-        {name: 'Glass', stock: 8},
-        {name: 'Mobile', stock: 1},
-        {name: 'Steel Bottle', stock: 25},
-    ];
 
-    const [selectedItem, setSelectedItem] = React.useState(items[0]);
-    const [selectedTab, setSelectedTab] = React.useState(0);
+    const [selectedInventory, setSelectedInventory] = useState('Cash Sale');
+    const [selectedInventoryName, setSelectedInventoryName] = React.useState('');
+    const [tabIndex, setTabIndex] = useState(0);
+    const [searchTerm, setSearchTerm] = useState('');
 
-    const handleTabChange = (event, newValue) => {
-        setSelectedTab(newValue);
+    const handleInventorySelect = (party) => {
+        console.log("handleInventorySelect ",party)
+        setSelectedInventory(party);
     };
 
-    return (<>
+    const handleTabChange = (event, newValue) => {
+        console.log("handleTabChange ",newValue)
+        setTabIndex(newValue);
+    };
+
+    const handleSearchChange = (event) => {
+        console.log("handleSearchChange ",event.target.value)
+        setSearchTerm(event.target.value);
+    };
+
+    const handleSelectedInventoryName = (party) => {
+        console.log("handleSelectedInventoryName ",party)
+        setSelectedInventoryName(party);
+    };
+
+    return (
+        <>
             <Box>
                 <Button onClick={onBooleanChange}>Back To View</Button>
             </Box>
-                <Grid container spacing={2}>
-                    <Grid item xs={3}>
-                        <Paper elevation={3}>
-                            <List component="nav">
-                                {items.map((item, index) => (
-                                    <div key={index}>
-                                        <ListItem button onClick={() => setSelectedItem(item)}>
-                                            <ListItemText primary={item.name} secondary={`${item.stock} PCS`}/>
-                                        </ListItem>
-                                        <Divider/>
-                                    </div>
-                                ))}
-                            </List>
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={9}>
-                        <Paper elevation={3} sx={{p: 2}}>
-                            <Typography variant="h4" component="div" gutterBottom>
-                                {selectedItem.name} <Button variant="contained" color="success" sx={{ml: 2}}>In
-                                Stock</Button>
-                            </Typography>
-                            <Tabs value={selectedTab} onChange={handleTabChange}>
-                                <Tab label="Item Details"/>
-                                <Tab label="Stock Details"/>
-                                <Tab label="Party Wise ReportReport"/>
-                            </Tabs>
-                            {selectedTab === 0 && <InventoryItemDetails item={selectedItem}/>}
-                            {selectedTab === 1 && <InventoryStockDetails item={selectedItem}/>}
-                            {selectedTab === 2 && <InventoryPartyWiseReport item={selectedItem}/>}
-                        </Paper>
-                    </Grid>
+            <Grid container spacing={2}>
+                <Grid item xs={3}>
+                    <Paper elevation={3} style={{height: 'calc(100vh - 64px)', overflow: 'auto'}}>
+                        <SidebarItems
+                            inventoryUser={inventoryUser}
+                            onInventorySelect={handleInventorySelect}
+                            selectedInventory={selectedInventory}
+                            searchTerm={searchTerm}
+                            onSearchChange={handleSearchChange}
+                            onInventorySelectName={handleSelectedInventoryName}
+                        />
+                    </Paper>
                 </Grid>
+                <Grid item xs={9}>
+                    <Paper style={{padding: 16, height: 'calc(100vh - 64px)', overflow: 'auto'}}>
+                        <Typography variant="h5">{selectedInventoryName}</Typography>
+                        <Tabs value={tabIndex} onChange={handleTabChange} aria-label="party tabs">
+                            <Tab label="Item Details" />
+                            <Tab label="Stock Details" />
+                            <Tab label="Party Wise Report" />
+                        </Tabs>
+                        <TabPanel value={tabIndex} index={0}>
+                            <InventoryItemDetails itemCode={handleInventorySelect} />
+                        </TabPanel>
+                        <TabPanel value={tabIndex} index={1}>
+                            <InventoryStockDetails itemCode={handleInventorySelect} />
+                        </TabPanel>
+                        <TabPanel value={tabIndex} index={2}>
+                            <InventoryPartyWiseReport itemCode={handleInventorySelect} />
+                        </TabPanel>
+                    </Paper>
+                </Grid>
+            </Grid>
         </>
     );
-}
+};
+
+
+

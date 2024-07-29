@@ -2,7 +2,8 @@ import {alpha, styled} from "@mui/material/styles";
 import TableCell, {tableCellClasses} from "@mui/material/TableCell";
 import InputBase from "@mui/material/InputBase";
 import TableRow from "@mui/material/TableRow";
-import {TextField} from "@mui/material";
+import {Box, TextField} from "@mui/material";
+import React from "react";
 
 export const StyledTableCell = styled(TableCell)(({theme}) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -141,3 +142,23 @@ export const getDate = () => {
     console.log("DATE >>> ", year, month, day)
     return `${year}-${month}-${day}`;
 }
+
+export const TabPanel = (props) => {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`tabpanel-${index}`}
+            aria-labelledby={`tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box p={3}>
+                    {children}
+                </Box>
+            )}
+        </div>
+    );
+};
