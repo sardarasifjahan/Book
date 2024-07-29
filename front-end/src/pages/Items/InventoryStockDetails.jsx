@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Button,
     Grid,
@@ -10,11 +10,27 @@ import {
     TableCell,
     TableContainer,
     TableHead,
-    TableRow
+    TableRow, Typography
 } from '@mui/material';
+import {useSelector} from "react-redux";
 
 
 export const InventoryStockDetails = ({itemCode}) => {
+    const {inventoryUser} = useSelector((state) => state.inventoryReducerValue);
+    const [partyDetail, setPartyDetail] = useState(null);
+
+    useEffect(() => {
+        console.log("InventoryStockDetails  ", itemCode);
+        const details = inventoryUser.find(item => item.id === itemCode);
+        console.log("Party Details values", details);
+        setPartyDetail(details || null);
+    }, [itemCode, inventoryUser]);
+
+    // If partyDetail is null or undefined, show a loading message or some default content
+    if (!partyDetail) {
+        return <Typography>Loading or No details available</Typography>;
+    }
+
     const transactions = [
         {date: '23-05-2024', type: 'Sales Invoice', quantity: '-2 PCS', invoice: '1', closing: '8 PCS'},
         {date: '22-05-2024', type: 'Opening Items', quantity: '10 PCS', invoice: '-', closing: '10 PCS'},

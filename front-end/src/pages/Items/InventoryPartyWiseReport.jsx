@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Button,
     Grid,
@@ -10,11 +10,28 @@ import {
     TableCell,
     TableContainer,
     TableHead,
-    TableRow
+    TableRow, Typography
 } from '@mui/material';
+import {useSelector} from "react-redux";
 
 
 export const InventoryPartyWiseReport = ({itemCode}) => {
+    const {inventoryUser} = useSelector((state) => state.inventoryReducerValue);
+    const [partyDetail, setPartyDetail] = useState(null);
+
+    useEffect(() => {
+        console.log("InventoryPartyWiseReport  ", itemCode);
+        console.log("Item Name  ", itemCode);
+        const details = inventoryUser.find(item => item.id === itemCode);
+        console.log("Party Details values", details);
+        setPartyDetail(details || null);
+    }, [itemCode, inventoryUser]);
+
+    // If partyDetail is null or undefined, show a loading message or some default content
+    if (!partyDetail) {
+        return <Typography>Loading or No details available</Typography>;
+    }
+
     const reports = [
         {name: 'Raju', salesQuantity: 2, salesAmount: '₹95.24', purchaseQuantity: 0, purchaseAmount: '-'},
     ];
