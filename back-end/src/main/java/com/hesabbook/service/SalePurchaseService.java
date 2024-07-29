@@ -85,13 +85,16 @@ public class SalePurchaseService {
         }
        SalePurchase salePurchaseReturn= salePurchaseRepository.save(salePurchase);
 
+        //Party
         Statements statements =new Statements();
         Transactions transaction=new Transactions();
         ItemWiseReport itemWiseReport=new ItemWiseReport();
+        //Inventory
         PartyWiseReport partyWiseReport=new PartyWiseReport();
         StockDetails stockDetails=new StockDetails();
         switch (salePurchase.getBillType()) {
             case SALES_INVOICE -> {
+                //Party
                 statements.setSpNo(salePurchaseReturn.getId());
                 statements.setBillType(SALES_INVOICE);
                 statements.setDebit(salePurchase.getTotalAmount());
@@ -104,6 +107,23 @@ public class SalePurchaseService {
                 transaction.setAmount(salePurchase.getTotalAmount());
                 transaction.setStatus(salePurchase.getStatus());
                 itemWiseReport.setSpNo(salePurchaseReturn.getId());
+                //Inventory
+                stockDetails.setSpNo(salePurchaseReturn.getId());
+                stockDetails.setBillType(SALES_INVOICE);
+                stockDetails.setQuantityType("-");
+                stockDetails.setQuantity(null);
+                stockDetails.setClosingStock(null);
+
+                partyWiseReport.setPartyNo(salePurchaseReturn.getPartyId()!=null ? Integer.valueOf(salePurchaseReturn.getPartyId()) :0);
+                partyWiseReport.setPartyName(salePurchaseReturn.getPartyName());
+                partyWiseReport.setSpNo(salePurchaseReturn.getId());
+                partyWiseReport.setSaleIncDec(null);
+                partyWiseReport.setSaleAmount(null);
+                partyWiseReport.setSaleQuantity(null);
+                partyWiseReport.setPurchaseAmount(null);
+                partyWiseReport.setPurchaseIncDec(null);
+                partyWiseReport.setPurchaseQuantity(null);
+
                 Type inventoryListType = new TypeToken<List<Inventory>>() {
                 }.getType();
                 List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);
@@ -125,6 +145,7 @@ public class SalePurchaseService {
                 });
             }
             case SALES_RETURN -> {
+                //Party
                 statements.setSpNo(salePurchaseReturn.getId());
                 statements.setBillType(SALES_RETURN);
                 statements.setDebit(salePurchase.getAmountReceived());
@@ -137,6 +158,22 @@ public class SalePurchaseService {
                 transaction.setAmount(salePurchase.getTotalAmount());
                 transaction.setStatus(salePurchase.getStatus());
                 itemWiseReport.setSpNo(salePurchaseReturn.getId());
+                //Inventory
+                stockDetails.setSpNo(salePurchaseReturn.getId());
+                stockDetails.setBillType(SALES_RETURN);
+                stockDetails.setQuantityType("-");
+                stockDetails.setQuantity(null);
+                stockDetails.setClosingStock(null);
+
+                partyWiseReport.setPartyNo(salePurchaseReturn.getPartyId()!=null ? Integer.valueOf(salePurchaseReturn.getPartyId()) :0);
+                partyWiseReport.setPartyName(salePurchaseReturn.getPartyName());
+                partyWiseReport.setSpNo(salePurchaseReturn.getId());
+                partyWiseReport.setSaleIncDec(null);
+                partyWiseReport.setSaleAmount(null);
+                partyWiseReport.setSaleQuantity(null);
+                partyWiseReport.setPurchaseAmount(null);
+                partyWiseReport.setPurchaseIncDec(null);
+                partyWiseReport.setPurchaseQuantity(null);
                 Type inventoryListType = new TypeToken<List<Inventory>>() {
                 }.getType();
                 List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);
@@ -158,6 +195,7 @@ public class SalePurchaseService {
                 });
             }
             case CREDIT_NOTE -> {
+                //Party
                 statements.setSpNo(salePurchaseReturn.getId());
                 statements.setBillType(CREDIT_NOTE);
                 statements.setDebit(salePurchase.getAmountReceived());
@@ -170,6 +208,22 @@ public class SalePurchaseService {
                 transaction.setAmount(salePurchase.getTotalAmount());
                 transaction.setStatus(salePurchase.getStatus());
                 itemWiseReport.setSpNo(salePurchaseReturn.getId());
+                //Inventory
+                stockDetails.setSpNo(salePurchaseReturn.getId());
+                stockDetails.setBillType(SALES_RETURN);
+                stockDetails.setQuantityType("+");
+                stockDetails.setQuantity(null);
+                stockDetails.setClosingStock(null);
+
+                partyWiseReport.setPartyNo(salePurchaseReturn.getPartyId()!=null ? Integer.valueOf(salePurchaseReturn.getPartyId()) :0);
+                partyWiseReport.setPartyName(salePurchaseReturn.getPartyName());
+                partyWiseReport.setSpNo(salePurchaseReturn.getId());
+                partyWiseReport.setSaleIncDec(null);
+                partyWiseReport.setSaleAmount(null);
+                partyWiseReport.setSaleQuantity(null);
+                partyWiseReport.setPurchaseAmount(null);
+                partyWiseReport.setPurchaseIncDec(null);
+                partyWiseReport.setPurchaseQuantity(null);
                 Type inventoryListType = new TypeToken<List<Inventory>>() {
                 }.getType();
                 List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);
@@ -191,24 +245,28 @@ public class SalePurchaseService {
                 });
             }
             case DELIVERY_CHALLAN -> {
+                //Party
                 transaction.setTransactionType(DELIVERY_CHALLAN);
                 transaction.setSpNo(salePurchaseReturn.getId());
                 transaction.setAmount(salePurchase.getTotalAmount());
                 transaction.setStatus("NA");
             }
             case PROFORMA_INVOICE -> {
+                //Party
                 transaction.setTransactionType(PROFORMA_INVOICE);
                 transaction.setSpNo(salePurchaseReturn.getId());
                 transaction.setAmount(salePurchase.getTotalAmount());
                 transaction.setStatus("NA");
             }
             case QUOTATION -> {
+                //Party
                 transaction.setTransactionType(QUOTATION);
                 transaction.setSpNo(salePurchaseReturn.getId());
                 transaction.setAmount(salePurchase.getTotalAmount());
                 transaction.setStatus("NA");
             }
             case PURCHASE_RETURN -> {
+                //Party
                 statements.setSpNo(salePurchaseReturn.getId());
                 statements.setBillType(PURCHASE_RETURN);
                 statements.setDebit(salePurchase.getTotalAmount());
@@ -221,6 +279,22 @@ public class SalePurchaseService {
                 transaction.setAmount(salePurchase.getTotalAmount());
                 transaction.setStatus(salePurchase.getStatus());
                 itemWiseReport.setSpNo(salePurchaseReturn.getId());
+                //Inventory
+                stockDetails.setSpNo(salePurchaseReturn.getId());
+                stockDetails.setBillType(PURCHASE_RETURN);
+                stockDetails.setQuantityType("-");
+                stockDetails.setQuantity(null);
+                stockDetails.setClosingStock(null);
+
+                partyWiseReport.setPartyNo(salePurchaseReturn.getPartyId()!=null ? Integer.valueOf(salePurchaseReturn.getPartyId()) :0);
+                partyWiseReport.setPartyName(salePurchaseReturn.getPartyName());
+                partyWiseReport.setSpNo(salePurchaseReturn.getId());
+                partyWiseReport.setSaleIncDec(null);
+                partyWiseReport.setSaleAmount(null);
+                partyWiseReport.setSaleQuantity(null);
+                partyWiseReport.setPurchaseAmount(null);
+                partyWiseReport.setPurchaseIncDec(null);
+                partyWiseReport.setPurchaseQuantity(null);
                 Type inventoryListType = new TypeToken<List<Inventory>>() {
                 }.getType();
                 List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);
@@ -242,6 +316,7 @@ public class SalePurchaseService {
                 });
             }
             case PURCHASE_INVOICE -> {
+                //Party
                 statements.setSpNo(salePurchaseReturn.getId());
                 statements.setBillType(PURCHASE_INVOICE);
                 statements.setDebit(salePurchase.getAmountReceived());
@@ -254,6 +329,22 @@ public class SalePurchaseService {
                 transaction.setAmount(salePurchase.getTotalAmount());
                 transaction.setStatus(salePurchase.getStatus());
                 itemWiseReport.setSpNo(salePurchaseReturn.getId());
+                //Inventory
+                stockDetails.setSpNo(salePurchaseReturn.getId());
+                stockDetails.setBillType(PURCHASE_INVOICE);
+                stockDetails.setQuantityType("+");
+                stockDetails.setQuantity(null);
+                stockDetails.setClosingStock(null);
+
+                partyWiseReport.setPartyNo(salePurchaseReturn.getPartyId()!=null ? Integer.valueOf(salePurchaseReturn.getPartyId()) :0);
+                partyWiseReport.setPartyName(salePurchaseReturn.getPartyName());
+                partyWiseReport.setSpNo(salePurchaseReturn.getId());
+                partyWiseReport.setSaleIncDec(null);
+                partyWiseReport.setSaleAmount(null);
+                partyWiseReport.setSaleQuantity(null);
+                partyWiseReport.setPurchaseAmount(null);
+                partyWiseReport.setPurchaseIncDec(null);
+                partyWiseReport.setPurchaseQuantity(null);
                 Type inventoryListType = new TypeToken<List<Inventory>>() {
                 }.getType();
                 List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);
@@ -275,12 +366,14 @@ public class SalePurchaseService {
                 });
             }
             case PURCHASE_ORDER -> {
+                //Party
                 transaction.setTransactionType(PURCHASE_ORDER);
                 transaction.setSpNo(salePurchaseReturn.getId());
                 transaction.setAmount(salePurchase.getTotalAmount());
                 transaction.setStatus("NA");
             }
             case DEBIT_NOTE -> {
+                //Party
                 statements.setSpNo(salePurchaseReturn.getId());
                 statements.setBillType(DEBIT_NOTE);
                 statements.setDebit(salePurchase.getTotalAmount());
@@ -293,6 +386,22 @@ public class SalePurchaseService {
                 transaction.setAmount(salePurchase.getTotalAmount());
                 transaction.setStatus(salePurchase.getStatus());
                 itemWiseReport.setSpNo(salePurchaseReturn.getId());
+                //Inventory
+                stockDetails.setSpNo(salePurchaseReturn.getId());
+                stockDetails.setBillType(DEBIT_NOTE);
+                stockDetails.setQuantityType("-");
+                stockDetails.setQuantity(null);
+                stockDetails.setClosingStock(null);
+
+                partyWiseReport.setPartyNo(salePurchaseReturn.getPartyId()!=null ? Integer.valueOf(salePurchaseReturn.getPartyId()) :0);
+                partyWiseReport.setPartyName(salePurchaseReturn.getPartyName());
+                partyWiseReport.setSpNo(salePurchaseReturn.getId());
+                partyWiseReport.setSaleIncDec(null);
+                partyWiseReport.setSaleAmount(null);
+                partyWiseReport.setSaleQuantity(null);
+                partyWiseReport.setPurchaseAmount(null);
+                partyWiseReport.setPurchaseIncDec(null);
+                partyWiseReport.setPurchaseQuantity(null);
                 Type inventoryListType = new TypeToken<List<Inventory>>() {
                 }.getType();
                 List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);

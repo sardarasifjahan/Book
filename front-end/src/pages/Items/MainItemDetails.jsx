@@ -68,13 +68,13 @@ export const MainItemDetails = ({detailFlagId, onBooleanChange}) => {
                             <Tab label="Party Wise Report" />
                         </Tabs>
                         <TabPanel value={tabIndex} index={0}>
-                            <InventoryItemDetails itemCode={handleInventorySelect} />
+                            <InventoryItemDetails itemCode={selectedInventory} />
                         </TabPanel>
                         <TabPanel value={tabIndex} index={1}>
-                            <InventoryStockDetails itemCode={handleInventorySelect} />
+                            <InventoryStockDetails itemCode={selectedInventory} />
                         </TabPanel>
                         <TabPanel value={tabIndex} index={2}>
-                            <InventoryPartyWiseReport itemCode={handleInventorySelect} />
+                            <InventoryPartyWiseReport itemCode={selectedInventory} />
                         </TabPanel>
                     </Paper>
                 </Grid>
