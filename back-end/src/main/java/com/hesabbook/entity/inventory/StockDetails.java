@@ -36,6 +36,8 @@ public class StockDetails implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private Integer itemCode;
+
     private Integer spNo;
     private String billType;
     private String quantity;

@@ -17,6 +17,8 @@ public interface InventoryRepository extends JpaRepository<Inventory, Integer> {
     @Query(value = "select * from inventory where primary_user_id=:id", nativeQuery = true)
     List<Inventory> findByPrimaryUserId(@Param("id") String id);
 
+
+
     @Transactional
     @Modifying
     @Query("UPDATE Inventory e SET e.totalStock = e.totalStock +:totalStock WHERE e.id = :id  or e.item=:item")
