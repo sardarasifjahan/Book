@@ -134,7 +134,7 @@ const routes = [
     {path: '/report', name: 'Reports', icon: <IconContainer><HiOutlineDocumentReport color="white"/></IconContainer>},
     {path: '/expenses', name: 'Expenses', icon: <IconContainer><FaCommentsDollar color="white"/> </IconContainer>}, ,
     {path: '/chat', name: 'Chat', icon: <IconContainer><IoChatbubbleEllipsesOutline color="white"/></IconContainer>},
-    {path: '/settings', name: 'Settings', icon: <IconContainer><IoSettingsOutline color="white"/></IconContainer>},
+    {path: '/settings/account', name: 'Settings', icon: <IconContainer><IoSettingsOutline color="white"/></IconContainer>},
     {path: '/logout', name: 'Logout', icon: <IconContainer><MdOutlinePowerSettingsNew color="white"/></IconContainer>},
 ];
 
