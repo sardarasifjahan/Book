@@ -37,10 +37,15 @@ import Modal from "@mui/joy/Modal";
 import ModalClose from "@mui/joy/ModalClose";
 import Typography from "@mui/joy/Typography";
 import {DELETE_KEY_VALUE, SAVE_KEY_VALUE} from "../apiendpoint/APIEndPoint";
-import {Input, List, ListItem, ListItemButton} from "@mui/joy";
+import {List, ListItem, ListItemButton} from "@mui/joy";
 
-import {Search, SearchIconWrapper, StyledInputBase, StyledTableCell, StyledTableRow,} from "../../commonStyle";
+import {getDate, Search, SearchIconWrapper, StyledInputBase, StyledTableCell, StyledTableRow,} from "../../commonStyle";
 import {MainItemDetails} from "./MainItemDetails";
+import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
+import {DatePicker} from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 
 export const InventoryShop = () => {
     const [enable, setEnable] = useState(true);
@@ -60,7 +65,12 @@ export const InventoryShop = () => {
     const [detailFlag, setDetailFlag] = React.useState(true);
     const [detailFlagId, setDetailFlagId] = React.useState('');
     const {inventoryUser} = useSelector((state) => state.inventoryReducerValue);
-
+    const [expireDate, setExpireDate] = React.useState(
+        dayjs(getDate())
+    );
+    const [mfgDate, setMfgDate] = React.useState(
+        dayjs(getDate())
+    );
     const handleDetailFlag = () => {
         setDetailFlag((prevState) => !prevState);
     };
@@ -107,6 +117,9 @@ export const InventoryShop = () => {
         event.preventDefault();
         inventoryObject["primary_user_id"] = loginData.primary_user_id;
         inventoryObject["secondary_user_id"] = loginData.secondary_user_id;
+        inventoryObject["mfgDate"] = mfgDate;
+        inventoryObject["expireDate"] = expireDate;
+
         const response = await axios.post(
             "http://localhost:8777/hesabbook/inventory/save",
             inventoryObject
@@ -1348,20 +1361,36 @@ export const InventoryShop = () => {
                                         paddingRight: "50px",
                                     }}
                                 >
-                                    <Input
-                                        type="date"
-                                        value={inventoryObject.mfgDate}
-                                        label="Manufacture Date"
-                                        onChange={(event) => handleTextFieldChange(event, "mfgDate")}
-                                    />
-                                    <Input
-                                        type="date"
-                                        value={inventoryObject.expireDate}
-                                        label="Expire Date"
-                                        onChange={(event) =>
-                                            handleTextFieldChange(event, "expireDate")
-                                        }
-                                    />
+                                    {/*     <Box sx={{width: "50%", margin: "10px"}}>
+                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                            <DemoContainer components={["DatePicker", "DatePicker"]}>
+                                                <DatePicker
+                                                    label="Sales Invoice Date:"
+                                                    value={saleInvoiceDate}
+                                                    onChange={(newValue) => setSaleInvoiceDate(newValue)}
+                                                />
+                                            </DemoContainer>
+                                        </LocalizationProvider>
+                                    </Box>*/}
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DemoContainer components={["DatePicker", "DatePicker"]}>
+                                            <DatePicker
+                                                type="date"
+                                                value={mfgDate}
+                                                label="Manufacture Date"
+                                                onChange={(newValue) => setMfgDate(newValue)}
+                                            />
+                                        </DemoContainer>
+                                    </LocalizationProvider> <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DemoContainer components={["DatePicker", "DatePicker"]}>
+                                        <DatePicker
+                                            type="date"
+                                            value={expireDate}
+                                            label="Expire Date"
+                                            onChange={(newValue) => setExpireDate(newValue)}
+                                        />
+                                    </DemoContainer>
+                                </LocalizationProvider>
                                     <TextField
                                         id="outlined-basic"
                                         label="Salt"

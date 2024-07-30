@@ -1,7 +1,7 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
 import {Box, Button, ButtonGroup, TextField} from "@mui/material";
-import {Search, SearchIconWrapper, StyledInputBase, StyledTableCell, StyledTableRow} from "../../commonStyle";
+import {getDate, Search, SearchIconWrapper, StyledInputBase, StyledTableCell, StyledTableRow} from "../../commonStyle";
 import SearchIcon from "@mui/icons-material/Search";
 import TableContainer from "@mui/material/TableContainer";
 import Paper from "@mui/material/Paper";
@@ -19,6 +19,11 @@ import {useDispatch, useSelector} from "react-redux";
 import axios from "axios";
 import {addExpense, removeExpense, updateManageUser} from "../../redux/Action";
 import {Input} from "@mui/joy";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
+import {DatePicker} from "@mui/x-date-pickers/DatePicker";
+import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import dayjs from "dayjs";
 
 export const Expense = () => {
     const [enable, setEnable] = useState(true);
@@ -38,6 +43,9 @@ export const Expense = () => {
         email: '',
     });
     const [employees, setEmployees] = useState([]);
+    const [expenseDate,setExpenseDate]= React.useState(
+        dayjs(getDate())
+    );
 
     const addRow = () => {
         //     const newEmployee = {id: employees.length + 1, item: '', quantity: 0, rate: 0, total: 0};
@@ -100,6 +108,7 @@ export const Expense = () => {
         event.preventDefault();
         manageUserObj['primary_user_id'] = loginData.primary_user_id;
         manageUserObj['secondary_user_id'] = loginData.secondary_user_id;
+        manageUserObj['expenseDate'] = expenseDate;
         let totalSalary = 0;
         employees.forEach(employee => {
             if (!isNaN(employee.total)) {
@@ -370,11 +379,18 @@ export const Expense = () => {
                                         <TextField id="outlined-basic" label="Notes" variant="outlined"
                                                    fullWidth value={manageUserObj.note}
                                                    onChange={(event) => handleTextFieldChange(event, 'note')}/>
-                                        <Input
-                                            type="date"
-                                            value={manageUserObj.expenseDate}
-                                            onChange={(event) => handleTextFieldChange(event, 'expenseDate')}
-                                        />
+
+                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                            <DemoContainer components={["DatePicker", "DatePicker"]}>
+                                                <DatePicker
+                                                    type="date"
+                                                    value={expenseDate}
+                                                    label="Expire Date"
+                                                    onChange={(newValue) => setExpenseDate(newValue)}
+                                                />
+                                            </DemoContainer>
+                                        </LocalizationProvider>
+
                                     </Box>
                                 </Box>
                                 <Box>
