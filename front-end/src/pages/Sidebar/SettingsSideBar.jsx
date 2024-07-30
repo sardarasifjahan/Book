@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {NavLink, useLocation, useNavigate} from 'react-router-dom';
-import {FaHome, FaUser} from 'react-icons/fa';
-import {AiFillHeart} from 'react-icons/ai';
+import {FaHome} from 'react-icons/fa';
+import {AiFillHeart, AiOutlinePrinter} from 'react-icons/ai';
 import {AnimatePresence, motion} from 'framer-motion';
 import SidebarMenu from './SidebarMenu';
 import {AppBar, Avatar, Badge, Box, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography} from '@mui/material';
@@ -10,6 +10,12 @@ import styled from 'styled-components';
 import Select from '@mui/material/Select';
 import './SideBar.css';
 import {useSelector} from "react-redux";
+import {MdBusinessCenter, MdOutlineAccountCircle, MdOutlinePowerSettingsNew} from "react-icons/md";
+import {TbFileSettings, TbUserEdit} from "react-icons/tb";
+import {LiaHandsHelpingSolid} from "react-icons/lia";
+import {GoStopwatch} from "react-icons/go";
+import {VscFeedback} from "react-icons/vsc";
+import {LuIndianRupee} from "react-icons/lu";
 
 const IconContainer = styled.div`
     display: flex;
@@ -23,33 +29,45 @@ const IconContainer = styled.div`
 
 const routes = [
     {path: '/', name: 'Back to Dashboard', icon: <IconContainer><FaHome color="white"/></IconContainer>},
-    {path: '/settings/Account', name: 'Account', icon: <IconContainer><FaUser color="white"/></IconContainer>},
+    {
+        path: '/settings/Account',
+        name: 'Account',
+        icon: <IconContainer><MdOutlineAccountCircle color="white"/></IconContainer>
+    },
     {
         path: '/settings/manage/business',
         name: 'Manage Business',
-        icon: <IconContainer><FaUser color="white"/></IconContainer>
+        icon: <IconContainer><MdBusinessCenter color="white"/></IconContainer>
     },
-    {path: '/settings/invoice', name: 'Invoice Settings', icon: <IconContainer><FaUser color="white"/></IconContainer>},
+    {
+        path: '/settings/invoice',
+        name: 'Invoice Settings',
+        icon: <IconContainer><TbFileSettings color="white"/></IconContainer>
+    },
     {
         path: '/settings/thermal/Print',
         name: 'Thermal Print',
-        icon: <IconContainer><FaUser color="white"/></IconContainer>
+        icon: <IconContainer><AiOutlinePrinter color="white"/></IconContainer>
     },
     {
         path: '/settings/manage/users',
         name: 'Manage Users',
-        icon: <IconContainer><FaUser color="white"/></IconContainer>
+        icon: <IconContainer><TbUserEdit color="white"/></IconContainer>
     },
-    {path: '/settings/reminders', name: 'Reminders', icon: <IconContainer><FaUser color="white"/></IconContainer>},
-    {path: '/settings/pricing', name: 'Pricing', icon: <IconContainer><FaUser color="white"/></IconContainer>},
+    {path: '/settings/reminders', name: 'Reminders', icon: <IconContainer><GoStopwatch color="white"/></IconContainer>},
+    {
+        path: '/settings/pricing',
+        name: 'Pricing',
+        icon: <IconContainer><LuIndianRupee color="white"/></IconContainer>
+    },
     {
         path: '/settings/help/support',
         name: 'Help And Support',
-        icon: <IconContainer><FaUser color="white"/></IconContainer>
+        icon: <IconContainer><LiaHandsHelpingSolid color="white"/></IconContainer>
     },
-    {path: '/settings/feedback', name: 'Feedback', icon: <IconContainer><AiFillHeart color="white"/></IconContainer>},
+    {path: '/settings/feedback', name: 'Feedback', icon: <IconContainer><VscFeedback color="white"/></IconContainer>},
     {path: '/settings/test', name: 'Testing', icon: <IconContainer><AiFillHeart color="white"/></IconContainer>},
-    {path: '/logout', name: 'Logout', icon: <IconContainer><AiFillHeart color="white"/></IconContainer>},
+    {path: '/logout', name: 'Logout', icon: <IconContainer><MdOutlinePowerSettingsNew color="white"/></IconContainer>},
 ];
 
 const settings = [

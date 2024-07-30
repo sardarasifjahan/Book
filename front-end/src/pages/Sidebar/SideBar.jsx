@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {NavLink, useLocation, useNavigate} from 'react-router-dom';
-import {FaHome, FaLock, FaUser} from 'react-icons/fa';
-import {MdMessage} from 'react-icons/md';
-import {BiAnalyse} from 'react-icons/bi';
-import {AiFillHeart, AiTwotoneFileExclamation} from 'react-icons/ai';
-import {BsCartCheck} from 'react-icons/bs';
+import {FaCommentsDollar, FaHome} from 'react-icons/fa';
+import {MdMessage, MdOutlineCoPresent, MdOutlinePowerSettingsNew, MdOutlineShoppingBag} from 'react-icons/md';
+import {SlPeople} from "react-icons/sl";
+import {IoChatbubbleEllipsesOutline, IoPricetagsOutline, IoSettingsOutline} from "react-icons/io5";
 import {AnimatePresence, motion} from 'framer-motion';
 import SidebarMenu from './SidebarMenu';
 import AppBar from '@mui/material/AppBar';
@@ -13,6 +12,8 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
+import {HiOutlineDocumentReport} from "react-icons/hi";
+import {BsBagCheck, BsBank} from "react-icons/bs";
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import Avatar from '@mui/material/Avatar';
@@ -24,6 +25,8 @@ import Select from '@mui/material/Select';
 import styled from 'styled-components';
 import './SideBar.css';
 import {useSelector} from "react-redux";
+import {LuBoxes, LuWarehouse} from "react-icons/lu";
+import {FiTag} from "react-icons/fi";
 
 const IconContainer = styled.div`
     display: flex;
@@ -37,96 +40,102 @@ const IconContainer = styled.div`
 
 const routes = [
     {path: '/', name: 'Dashboard', icon: <IconContainer><FaHome color="white"/></IconContainer>},
-    {path: '/party', name: 'Parties', icon: <IconContainer><FaUser color="white"/></IconContainer>},
+    {path: '/party', name: 'Parties', icon: <IconContainer><SlPeople color="white"/></IconContainer>},
     {path: '/posbilling', name: 'POS-Billing', icon: <IconContainer><MdMessage color="white"/></IconContainer>},
 
     {
         path: '/item',
         name: 'Items',
-        icon: <IconContainer><AiTwotoneFileExclamation color="white"/></IconContainer>,
+        icon: <IconContainer><LuBoxes color="white"/></IconContainer>,
         subRoutes: [
-            {path: '/item/inventory', name: 'Inventory', icon: <IconContainer><FaUser color="white"/></IconContainer>},
-            {path: '/item/godowon', name: 'Godowon ', icon: <IconContainer><FaLock color="white"/></IconContainer>},
+            {path: '/item/inventory', name: 'Inventory', icon: <IconContainer><LuBoxes color="white"/></IconContainer>},
+            {
+                path: '/item/godowon',
+                name: 'Godowon ',
+                icon: <IconContainer><LuWarehouse color="white"/></IconContainer>
+            },
         ]
     },
     {
         path: '/sales',
         name: 'Sales',
-        icon: <IconContainer><AiTwotoneFileExclamation color="white"/></IconContainer>,
+        icon: <IconContainer><FiTag color="white"/></IconContainer>,
         subRoutes: [
             {
                 path: '/sales/invoice',
                 name: 'Sales Invoice',
-                icon: <IconContainer><FaUser color="white"/></IconContainer>
+                icon: <IconContainer><IoPricetagsOutline color="white"/></IconContainer>
             }, {
                 path: '/sales/estimate',
                 name: 'Quotation',
-                icon: <IconContainer><FaUser color="white"/></IconContainer>
+                icon: <IconContainer><IoPricetagsOutline color="white"/></IconContainer>
             }, {
                 path: '/sales/payment-in',
                 name: 'Payment In',
-                icon: <IconContainer><FaUser color="white"/></IconContainer>
+                icon: <IconContainer><IoPricetagsOutline color="white"/></IconContainer>
             },
-            {path: '/sales/return', name: 'Sales Return', icon: <IconContainer><FaLock color="white"/></IconContainer>},
+            {
+                path: '/sales/return',
+                name: 'Sales Return',
+                icon: <IconContainer><IoPricetagsOutline color="white"/></IconContainer>
+            },
 
             {
                 path: '/Sales/credit-note',
                 name: 'Credit Note',
-                icon: <IconContainer><FaLock color="white"/></IconContainer>
+                icon: <IconContainer><IoPricetagsOutline color="white"/></IconContainer>
             },
             {
                 path: '/sales/delivery',
                 name: 'Delivery Challan ',
-                icon: <IconContainer><FaLock color="white"/></IconContainer>
+                icon: <IconContainer><IoPricetagsOutline color="white"/></IconContainer>
             },
             {
                 path: '/sales/proforma',
                 name: 'Proforma Invoice',
-                icon: <IconContainer><FaLock color="white"/></IconContainer>
+                icon: <IconContainer><IoPricetagsOutline color="white"/></IconContainer>
             },
         ]
     },
     {
         path: '/purchases',
         name: 'Purchase',
-        icon: <IconContainer><AiTwotoneFileExclamation color="white"/></IconContainer>,
+        icon: <IconContainer><MdOutlineShoppingBag color="white"/></IconContainer>,
         subRoutes: [
             {
                 path: '/purchases/invoice',
                 name: 'Purchase Invoice',
-                icon: <IconContainer><FaUser color="white"/></IconContainer>
+                icon: <IconContainer><BsBagCheck color="white"/></IconContainer>
             },
             {
                 path: '/purchases/order',
                 name: 'Purchase Order',
-                icon: <IconContainer><FaUser color="white"/></IconContainer>
+                icon: <IconContainer><BsBagCheck color="white"/></IconContainer>
             },
             {
                 path: '/purchases/return',
                 name: 'Purchase Return',
-                icon: <IconContainer><FaLock color="white"/></IconContainer>
+                icon: <IconContainer><BsBagCheck color="white"/></IconContainer>
             },
             {
                 path: '/purchases/payment-out',
                 name: 'Payment Out',
-                icon: <IconContainer><FaLock color="white"/></IconContainer>
+                icon: <IconContainer><BsBagCheck color="white"/></IconContainer>
             },
             {
                 path: '/purchases/debit-note',
                 name: 'Debit Note',
-                icon: <IconContainer><FaLock color="white"/></IconContainer>
+                icon: <IconContainer><BsBagCheck color="white"/></IconContainer>
             },
         ]
     },
-    {path: '/attendance', name: 'Attendance', icon: <IconContainer><BsCartCheck color="white"/></IconContainer>},
-
-    {path: '/bank', name: 'Cash & Bank', icon: <IconContainer><BsCartCheck color="white"/></IconContainer>},
-    {path: '/report', name: 'Reports', icon: <IconContainer><AiFillHeart color="white"/></IconContainer>},
-    {path: '/expenses', name: 'Expenses', icon: <IconContainer><BiAnalyse color="white"/></IconContainer>},
-    {path: '/chat', name: 'Chat', icon: <IconContainer><AiFillHeart color="white"/></IconContainer>},
-
-    {path: '/settings', name: 'Settings', icon: <IconContainer><AiFillHeart color="white"/></IconContainer>},
-    {path: '/logout', name: 'Logout', icon: <IconContainer><AiFillHeart color="white"/></IconContainer>},
+    {path: '/attendance', name: 'Attendance', icon: <IconContainer><MdOutlineCoPresent color="white"/></IconContainer>},
+    {path: '/bank', name: 'Cash & Bank', icon: <IconContainer><BsBank color="white"/></IconContainer>},
+    {path: '/report', name: 'Reports', icon: <IconContainer><HiOutlineDocumentReport color="white"/></IconContainer>},
+    {path: '/expenses', name: 'Expenses', icon: <IconContainer><FaCommentsDollar color="white"/> </IconContainer>}, ,
+    {path: '/chat', name: 'Chat', icon: <IconContainer><IoChatbubbleEllipsesOutline color="white"/></IconContainer>},
+    {path: '/settings', name: 'Settings', icon: <IconContainer><IoSettingsOutline color="white"/></IconContainer>},
+    {path: '/logout', name: 'Logout', icon: <IconContainer><MdOutlinePowerSettingsNew color="white"/></IconContainer>},
 ];
 
 const settings = [
@@ -168,14 +177,17 @@ const SideBar = ({children}) => {
     };
 
     const getRouteName = () => {
-        const route = routes.find(r => r.path === location.pathname);
-        if (route) {
+        if (!routes || !Array.isArray(routes)) {
+            return 'Dashboard';
+        }
+        const route = routes.find(r => r && r.path === location.pathname);
+        if (route && route.name) {
             return route.name;
         } else {
             for (const mainRoute of routes) {
-                if (mainRoute.subRoutes) {
-                    const subRoute = mainRoute.subRoutes.find(sr => sr.path === location.pathname);
-                    if (subRoute) {
+                if (mainRoute && mainRoute.subRoutes && Array.isArray(mainRoute.subRoutes)) {
+                    const subRoute = mainRoute.subRoutes.find(sr => sr && sr.path === location.pathname);
+                    if (subRoute && subRoute.name) {
                         return subRoute.name;
                     }
                 }

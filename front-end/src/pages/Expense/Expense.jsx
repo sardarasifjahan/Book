@@ -18,7 +18,6 @@ import {expenseDataModel} from "../../datamodel/ManageUserDataModel";
 import {useDispatch, useSelector} from "react-redux";
 import axios from "axios";
 import {addExpense, removeExpense, updateManageUser} from "../../redux/Action";
-import {Input} from "@mui/joy";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
@@ -46,6 +45,8 @@ export const Expense = () => {
     const [expenseDate,setExpenseDate]= React.useState(
         dayjs(getDate())
     );
+
+
 
     const addRow = () => {
         //     const newEmployee = {id: employees.length + 1, item: '', quantity: 0, rate: 0, total: 0};
