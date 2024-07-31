@@ -53,6 +53,7 @@ public class SalePurchaseService {
     private InventoryRepository inventoryRepository;
 
     public SalePurchase save(SalePurchase salePurchase) {
+        Integer id=salePurchase.getId();
         Double totalAmount = 0.0;
         Double amountReceived = 0.0;
         Double balanceAmount = 0.0;
@@ -84,7 +85,7 @@ public class SalePurchaseService {
             case PURCHASE_ORDER, DELIVERY_CHALLAN, QUOTATION, PROFORMA_INVOICE -> salePurchase.setStatus(OPEN);
         }
         SalePurchase salePurchaseReturn = salePurchaseRepository.save(salePurchase);
-        if (salePurchase.getId() == null) {
+        if (id == null) {
             //Party
             Statements statements = new Statements();
             Transactions transaction = new Transactions();
@@ -228,7 +229,7 @@ public class SalePurchaseService {
                             }
                         }
                         stockDetails.setSpNo(salePurchaseReturn.getId());
-                        stockDetails.setBillType(SALES_INVOICE);
+                        stockDetails.setBillType(SALES_RETURN);
                         stockDetails.setQuantityType("-");
                         if (x.getQuantity() != null) {
                             Double quantityDouble = Double.valueOf(x.getQuantity());
@@ -269,7 +270,7 @@ public class SalePurchaseService {
                     itemWiseReport.setSpNo(salePurchaseReturn.getId());
                     //Inventory
                     stockDetails.setSpNo(salePurchaseReturn.getId());
-                    stockDetails.setBillType(SALES_RETURN);
+                    stockDetails.setBillType(CREDIT_NOTE);
                     stockDetails.setQuantityType("+");
                     stockDetails.setQuantity(null);
                     stockDetails.setClosingStock(null);
@@ -309,7 +310,7 @@ public class SalePurchaseService {
                             }
                         }
                         stockDetails.setSpNo(salePurchaseReturn.getId());
-                        stockDetails.setBillType(SALES_INVOICE);
+                        stockDetails.setBillType(CREDIT_NOTE);
                         stockDetails.setQuantityType("-");
                         if (x.getQuantity() != null) {
                             Double quantityDouble = Double.valueOf(x.getQuantity());
@@ -411,7 +412,7 @@ public class SalePurchaseService {
                             }
                         }
                         stockDetails.setSpNo(salePurchaseReturn.getId());
-                        stockDetails.setBillType(SALES_INVOICE);
+                        stockDetails.setBillType(PURCHASE_RETURN);
                         stockDetails.setQuantityType("-");
                         if (x.getQuantity() != null) {
                             Double quantityDouble = Double.valueOf(x.getQuantity());
@@ -492,7 +493,7 @@ public class SalePurchaseService {
                             }
                         }
                         stockDetails.setSpNo(salePurchaseReturn.getId());
-                        stockDetails.setBillType(SALES_INVOICE);
+                        stockDetails.setBillType(PURCHASE_INVOICE);
                         stockDetails.setQuantityType("-");
                         if (x.getQuantity() != null) {
                             Double quantityDouble = Double.valueOf(x.getQuantity());
@@ -580,7 +581,7 @@ public class SalePurchaseService {
                             }
                         }
                         stockDetails.setSpNo(salePurchaseReturn.getId());
-                        stockDetails.setBillType(SALES_INVOICE);
+                        stockDetails.setBillType(DEBIT_NOTE);
                         stockDetails.setQuantityType("-");
                         Double closingStock;
                         if (x.getQuantity() != null) {
