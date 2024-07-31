@@ -79,563 +79,564 @@ public class SalePurchaseService {
             }
         }
         switch (salePurchase.getBillType()) {
-            case SALES_INVOICE, DEBIT_NOTE, PURCHASE_RETURN -> updateItemQuantity(salePurchase, "Reduce");
-            case SALES_RETURN, CREDIT_NOTE, PURCHASE_INVOICE -> updateItemQuantity(salePurchase, "Increment");
+         /*   case SALES_INVOICE, DEBIT_NOTE, PURCHASE_RETURN -> updateItemQuantity(salePurchase, "Reduce");
+            case SALES_RETURN, CREDIT_NOTE, PURCHASE_INVOICE -> updateItemQuantity(salePurchase, "Increment");*/
             case PURCHASE_ORDER, DELIVERY_CHALLAN, QUOTATION, PROFORMA_INVOICE -> salePurchase.setStatus(OPEN);
         }
         SalePurchase salePurchaseReturn = salePurchaseRepository.save(salePurchase);
+        if (salePurchase.getId() == null) {
+            //Party
+            Statements statements = new Statements();
+            Transactions transaction = new Transactions();
+            ItemWiseReport itemWiseReport = new ItemWiseReport();
+            //Inventory
+            PartyWiseReport partyWiseReport = new PartyWiseReport();
+            StockDetails stockDetails = new StockDetails();
+            switch (salePurchase.getBillType()) {
+                case SALES_INVOICE -> {
+                    //Party
+                    statements.setSpNo(salePurchaseReturn.getId());
+                    statements.setBillType(SALES_INVOICE);
+                    statements.setDebit(salePurchase.getTotalAmount());
+                    statements.setCredit(salePurchase.getAmountReceived());
+                    statements.setReceivedBalance(salePurchase.getAmountReceived());
+                    statements.setBalanceAmount(salePurchase.getBalanceAmount());
+                    statements.setTotalAmount(salePurchase.getTotalAmount());
+                    transaction.setTransactionType(SALES_INVOICE);
+                    transaction.setSpNo(salePurchaseReturn.getId());
+                    transaction.setAmount(salePurchase.getTotalAmount());
+                    transaction.setStatus(salePurchase.getStatus());
+                    itemWiseReport.setSpNo(salePurchaseReturn.getId());
 
-        //Party
-        Statements statements = new Statements();
-        Transactions transaction = new Transactions();
-        ItemWiseReport itemWiseReport = new ItemWiseReport();
-        //Inventory
-        PartyWiseReport partyWiseReport = new PartyWiseReport();
-        StockDetails stockDetails = new StockDetails();
-        switch (salePurchase.getBillType()) {
-            case SALES_INVOICE -> {
-                //Party
-                statements.setSpNo(salePurchaseReturn.getId());
-                statements.setBillType(SALES_INVOICE);
-                statements.setDebit(salePurchase.getTotalAmount());
-                statements.setCredit(salePurchase.getBalanceAmount());
-                statements.setReceivedBalance(salePurchase.getAmountReceived());
-                statements.setBalanceAmount(salePurchase.getBalanceAmount());
-                statements.setTotalAmount(salePurchase.getTotalAmount());
-                transaction.setTransactionType(SALES_INVOICE);
-                transaction.setSpNo(salePurchaseReturn.getId());
-                transaction.setAmount(salePurchase.getTotalAmount());
-                transaction.setStatus(salePurchase.getStatus());
-                itemWiseReport.setSpNo(salePurchaseReturn.getId());
 
-
-                Type inventoryListType = new TypeToken<List<Inventory>>() {
-                }.getType();
-                List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);
-                if (inventoryList == null || inventoryList.isEmpty()) {
-                    System.out.println("Invalid input: inventory list is null or empty");
-                }
-                inventoryList.forEach(x -> {
-                    itemWiseReport.setItemNo(x.getId());
-                    itemWiseReport.setItemName(x.getItem());
-                    itemWiseReport.setItemCode(x.getItemCode());
-                    BigDecimal salePrice = new BigDecimal(x.getSalePrice());
-                    BigDecimal saleAmount = salePrice.multiply(new BigDecimal(x.getQuantity()));
-                    itemWiseReport.setSaleAmount(String.valueOf(saleAmount)); // Set sale amount
-                    itemWiseReport.setSaleQuantity(String.valueOf(x.getQuantity()));
-                    itemWiseReport.setSaleIncDec("-");
+                    Type inventoryListType = new TypeToken<List<Inventory>>() {
+                    }.getType();
+                    List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);
+                    if (inventoryList == null || inventoryList.isEmpty()) {
+                        System.out.println("Invalid input: inventory list is null or empty");
+                    }
+                    inventoryList.forEach(x -> {
+                        itemWiseReport.setItemNo(x.getId());
+                        itemWiseReport.setItemName(x.getItem());
+                        itemWiseReport.setItemCode(x.getItemCode());
+                        BigDecimal salePrice = new BigDecimal(x.getSalePrice());
+                        BigDecimal saleAmount = salePrice.multiply(new BigDecimal(x.getQuantity()));
+                        itemWiseReport.setSaleAmount(String.valueOf(saleAmount)); // Set sale amount
+                        itemWiseReport.setSaleQuantity(String.valueOf(x.getQuantity()));
+                        itemWiseReport.setSaleIncDec("-");
                    /* itemWiseReport.setPurchaseAmount();
                     itemWiseReport.setPurchaseQuantity();
                     itemWiseReport.setPurchaseIncDec();*/
 
+                        //Inventory
+                        if (StringUtils.isNotBlank(x.getItemCode())) {
+                            stockDetails.setItemCode(Integer.valueOf(x.getItemCode()));
+                        }
+                        stockDetails.setSpNo(salePurchaseReturn.getId());
+                        stockDetails.setBillType(SALES_INVOICE);
+                        stockDetails.setQuantityType("-");
+                        Double quantityDouble = null;
+                        if (x.getQuantity() != null) {
+                            quantityDouble = Double.valueOf(x.getQuantity());
+                            Double closingStock = Double.valueOf(x.getTotalStock());
+                            stockDetails.setQuantity(String.valueOf(quantityDouble));
+                            stockDetails.setClosingStock(String.valueOf(closingStock - quantityDouble));
+                        }
+                        partyWiseReport.setPartyNo(salePurchaseReturn.getPartyId() != null ? Integer.valueOf(salePurchaseReturn.getPartyId()) : 0);
+                        partyWiseReport.setPartyName(salePurchaseReturn.getPartyName());
+                        partyWiseReport.setSpNo(salePurchaseReturn.getId());
+                        partyWiseReport.setSaleIncDec("+");
+                        partyWiseReport.setSaleAmount(String.valueOf(saleAmount));
+                        partyWiseReport.setSaleQuantity(quantityDouble);
+                        partyWiseReport.setPurchaseAmount(null);
+                        partyWiseReport.setPurchaseIncDec(null);
+                        partyWiseReport.setPurchaseQuantity(null);
+                        CompletableFuture.runAsync(() -> {
+                            Optional<Inventory> inventories = inventoryRepository.findById(x.getId());
+                            if (inventories.isPresent()) {
+                                Inventory inventory = inventories.get();
+                                //Stock
+                                List<StockDetails> stockDetailsList = new ArrayList<>();
+                                stockDetailsList.addAll(inventory.getStockDetailsList());
+                                stockDetailsList.addAll(Arrays.asList(stockDetails));
+
+                                List<PartyWiseReport> partyWiseReportList = new ArrayList<>();
+                                partyWiseReportList.addAll(inventory.getPartyWiseReportList());
+                                partyWiseReportList.addAll(Arrays.asList(partyWiseReport));
+                                inventory.setPartyWiseReportList(partyWiseReportList);
+                                inventory.setStockDetailsList(stockDetailsList);
+                                inventory.setTotalStock(stockDetails.getClosingStock());
+                                inventoryRepository.save(inventory);
+                            }
+                        });
+
+                    });
+                }
+                case SALES_RETURN -> {
+                    //Party
+                    statements.setSpNo(salePurchaseReturn.getId());
+                    statements.setBillType(SALES_RETURN);
+                    statements.setDebit(salePurchase.getAmountReceived());
+                    statements.setCredit(salePurchase.getTotalAmount());
+                    statements.setReceivedBalance(salePurchase.getAmountReceived());
+                    statements.setBalanceAmount(salePurchase.getBalanceAmount());
+                    statements.setTotalAmount(salePurchase.getTotalAmount());
+                    transaction.setTransactionType(SALES_RETURN);
+                    transaction.setSpNo(salePurchaseReturn.getId());
+                    transaction.setAmount(salePurchase.getTotalAmount());
+                    transaction.setStatus(salePurchase.getStatus());
+                    itemWiseReport.setSpNo(salePurchaseReturn.getId());
                     //Inventory
-                    if (StringUtils.isNotBlank(x.getItemCode())) {
-                        stockDetails.setItemCode(Integer.valueOf(x.getItemCode()));
-                    }
                     stockDetails.setSpNo(salePurchaseReturn.getId());
-                    stockDetails.setBillType(SALES_INVOICE);
+                    stockDetails.setBillType(SALES_RETURN);
                     stockDetails.setQuantityType("-");
-                    Double quantityDouble = null;
-                    if (x.getQuantity() != null) {
-                        quantityDouble = Double.valueOf(x.getQuantity());
-                        Double closingStock = Double.valueOf(x.getTotalStock());
-                        stockDetails.setQuantity(String.valueOf(quantityDouble));
-                        stockDetails.setClosingStock(String.valueOf(closingStock - quantityDouble));
-                    }
+                    stockDetails.setQuantity(null);
+                    stockDetails.setClosingStock(null);
+
                     partyWiseReport.setPartyNo(salePurchaseReturn.getPartyId() != null ? Integer.valueOf(salePurchaseReturn.getPartyId()) : 0);
                     partyWiseReport.setPartyName(salePurchaseReturn.getPartyName());
                     partyWiseReport.setSpNo(salePurchaseReturn.getId());
-                    partyWiseReport.setSaleIncDec("+");
-                    partyWiseReport.setSaleAmount(String.valueOf(saleAmount));
-                    partyWiseReport.setSaleQuantity(quantityDouble);
+                    partyWiseReport.setSaleIncDec(null);
+                    partyWiseReport.setSaleAmount(null);
+                    partyWiseReport.setSaleQuantity(null);
                     partyWiseReport.setPurchaseAmount(null);
                     partyWiseReport.setPurchaseIncDec(null);
                     partyWiseReport.setPurchaseQuantity(null);
-                    CompletableFuture.runAsync(() -> {
-                        Optional<Inventory> inventories = inventoryRepository.findById(x.getId());
-                        if (inventories.isPresent()) {
-                            Inventory inventory = inventories.get();
-                            //Stock
-                            List<StockDetails> stockDetailsList = new ArrayList<>();
-                            stockDetailsList.addAll(inventory.getStockDetailsList());
-                            stockDetailsList.addAll(Arrays.asList(stockDetails));
-
-                            List<PartyWiseReport> partyWiseReportList = new ArrayList<>();
-                            partyWiseReportList.addAll(inventory.getPartyWiseReportList());
-                            partyWiseReportList.addAll(Arrays.asList(partyWiseReport));
-                            inventory.setPartyWiseReportList(partyWiseReportList);
-                            inventory.setStockDetailsList(stockDetailsList);
-                            inventory.setTotalStock(stockDetails.getClosingStock());
-                            inventoryRepository.save(inventory);
-                        }
-                    });
-
-                });
-            }
-            case SALES_RETURN -> {
-                //Party
-                statements.setSpNo(salePurchaseReturn.getId());
-                statements.setBillType(SALES_RETURN);
-                statements.setDebit(salePurchase.getAmountReceived());
-                statements.setCredit(salePurchase.getTotalAmount());
-                statements.setReceivedBalance(salePurchase.getAmountReceived());
-                statements.setBalanceAmount(salePurchase.getBalanceAmount());
-                statements.setTotalAmount(salePurchase.getTotalAmount());
-                transaction.setTransactionType(SALES_RETURN);
-                transaction.setSpNo(salePurchaseReturn.getId());
-                transaction.setAmount(salePurchase.getTotalAmount());
-                transaction.setStatus(salePurchase.getStatus());
-                itemWiseReport.setSpNo(salePurchaseReturn.getId());
-                //Inventory
-                stockDetails.setSpNo(salePurchaseReturn.getId());
-                stockDetails.setBillType(SALES_RETURN);
-                stockDetails.setQuantityType("-");
-                stockDetails.setQuantity(null);
-                stockDetails.setClosingStock(null);
-
-                partyWiseReport.setPartyNo(salePurchaseReturn.getPartyId() != null ? Integer.valueOf(salePurchaseReturn.getPartyId()) : 0);
-                partyWiseReport.setPartyName(salePurchaseReturn.getPartyName());
-                partyWiseReport.setSpNo(salePurchaseReturn.getId());
-                partyWiseReport.setSaleIncDec(null);
-                partyWiseReport.setSaleAmount(null);
-                partyWiseReport.setSaleQuantity(null);
-                partyWiseReport.setPurchaseAmount(null);
-                partyWiseReport.setPurchaseIncDec(null);
-                partyWiseReport.setPurchaseQuantity(null);
-                Type inventoryListType = new TypeToken<List<Inventory>>() {
-                }.getType();
-                List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);
-                if (inventoryList == null || inventoryList.isEmpty()) {
-                    System.out.println("Invalid input: inventory list is null or empty");
-                }
-                inventoryList.forEach(x -> {
-                    itemWiseReport.setItemNo(x.getId());
-                    itemWiseReport.setItemName(x.getItem());
-                    itemWiseReport.setItemCode(x.getItemCode());
-                    BigDecimal salePrice = new BigDecimal(x.getSalePrice());
-                    BigDecimal saleAmount = salePrice.multiply(new BigDecimal(x.getQuantity()));
-                    itemWiseReport.setSaleAmount(String.valueOf(saleAmount)); // Set sale amount
-                    itemWiseReport.setSaleQuantity(String.valueOf(x.getQuantity()));
-                    itemWiseReport.setSaleIncDec("-");
+                    Type inventoryListType = new TypeToken<List<Inventory>>() {
+                    }.getType();
+                    List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);
+                    if (inventoryList == null || inventoryList.isEmpty()) {
+                        System.out.println("Invalid input: inventory list is null or empty");
+                    }
+                    inventoryList.forEach(x -> {
+                        itemWiseReport.setItemNo(x.getId());
+                        itemWiseReport.setItemName(x.getItem());
+                        itemWiseReport.setItemCode(x.getItemCode());
+                        BigDecimal salePrice = new BigDecimal(x.getSalePrice());
+                        BigDecimal saleAmount = salePrice.multiply(new BigDecimal(x.getQuantity()));
+                        itemWiseReport.setSaleAmount(String.valueOf(saleAmount)); // Set sale amount
+                        itemWiseReport.setSaleQuantity(String.valueOf(x.getQuantity()));
+                        itemWiseReport.setSaleIncDec("-");
                    /* itemWiseReport.setPurchaseAmount();
                     itemWiseReport.setPurchaseQuantity();
                     itemWiseReport.setPurchaseIncDec();*/
 
-                    //Inventory
-                    if (StringUtils.isNotBlank(x.getItemCode())) {
+                        //Inventory
                         if (StringUtils.isNotBlank(x.getItemCode())) {
-                            stockDetails.setItemCode(Integer.valueOf(x.getItemCode()));
+                            if (StringUtils.isNotBlank(x.getItemCode())) {
+                                stockDetails.setItemCode(Integer.valueOf(x.getItemCode()));
+                            }
                         }
-                    }
-                    stockDetails.setSpNo(salePurchaseReturn.getId());
-                    stockDetails.setBillType(SALES_INVOICE);
-                    stockDetails.setQuantityType("-");
-                    if (x.getQuantity() != null) {
-                        Double quantityDouble = Double.valueOf(x.getQuantity());
-                        Double closingStock = Double.valueOf(x.getTotalStock());
-                        stockDetails.setQuantity(String.valueOf(quantityDouble));
-                        stockDetails.setClosingStock(String.valueOf(closingStock + quantityDouble));
-                    }
-                    ;
-                    CompletableFuture.runAsync(() -> {
-                        Optional<Inventory> inventories = inventoryRepository.findById(x.getId());
-                        if (inventories.isPresent()) {
-                            Inventory inventory = inventories.get();
-                            //Stock
-                            List<StockDetails> stockDetailsList = new ArrayList<>();
-                            stockDetailsList.addAll(inventory.getStockDetailsList());
-                            stockDetailsList.addAll(Arrays.asList(stockDetails));
+                        stockDetails.setSpNo(salePurchaseReturn.getId());
+                        stockDetails.setBillType(SALES_INVOICE);
+                        stockDetails.setQuantityType("-");
+                        if (x.getQuantity() != null) {
+                            Double quantityDouble = Double.valueOf(x.getQuantity());
+                            Double closingStock = Double.valueOf(x.getTotalStock());
+                            stockDetails.setQuantity(String.valueOf(quantityDouble));
+                            stockDetails.setClosingStock(String.valueOf(closingStock + quantityDouble));
+                        }
+                        ;
+                        CompletableFuture.runAsync(() -> {
+                            Optional<Inventory> inventories = inventoryRepository.findById(x.getId());
+                            if (inventories.isPresent()) {
+                                Inventory inventory = inventories.get();
+                                //Stock
+                                List<StockDetails> stockDetailsList = new ArrayList<>();
+                                stockDetailsList.addAll(inventory.getStockDetailsList());
+                                stockDetailsList.addAll(Arrays.asList(stockDetails));
 
-                            inventory.setStockDetailsList(stockDetailsList);
-                            inventory.setTotalStock(stockDetails.getClosingStock());
-                            inventoryRepository.save(inventory);
-                        }
+                                inventory.setStockDetailsList(stockDetailsList);
+                                inventory.setTotalStock(stockDetails.getClosingStock());
+                                inventoryRepository.save(inventory);
+                            }
+                        });
                     });
-                });
-            }
-            case CREDIT_NOTE -> {
-                //Party
-                statements.setSpNo(salePurchaseReturn.getId());
-                statements.setBillType(CREDIT_NOTE);
-                statements.setDebit(salePurchase.getAmountReceived());
-                statements.setCredit(salePurchase.getTotalAmount());
-                statements.setReceivedBalance(salePurchase.getAmountReceived());
-                statements.setBalanceAmount(salePurchase.getBalanceAmount());
-                statements.setTotalAmount(salePurchase.getTotalAmount());
-                transaction.setTransactionType(CREDIT_NOTE);
-                transaction.setSpNo(salePurchaseReturn.getId());
-                transaction.setAmount(salePurchase.getTotalAmount());
-                transaction.setStatus(salePurchase.getStatus());
-                itemWiseReport.setSpNo(salePurchaseReturn.getId());
-                //Inventory
-                stockDetails.setSpNo(salePurchaseReturn.getId());
-                stockDetails.setBillType(SALES_RETURN);
-                stockDetails.setQuantityType("+");
-                stockDetails.setQuantity(null);
-                stockDetails.setClosingStock(null);
-
-                partyWiseReport.setPartyNo(salePurchaseReturn.getPartyId() != null ? Integer.valueOf(salePurchaseReturn.getPartyId()) : 0);
-                partyWiseReport.setPartyName(salePurchaseReturn.getPartyName());
-                partyWiseReport.setSpNo(salePurchaseReturn.getId());
-                partyWiseReport.setSaleIncDec(null);
-                partyWiseReport.setSaleAmount(null);
-                partyWiseReport.setSaleQuantity(null);
-                partyWiseReport.setPurchaseAmount(null);
-                partyWiseReport.setPurchaseIncDec(null);
-                partyWiseReport.setPurchaseQuantity(null);
-                Type inventoryListType = new TypeToken<List<Inventory>>() {
-                }.getType();
-                List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);
-                if (inventoryList == null || inventoryList.isEmpty()) {
-                    System.out.println("Invalid input: inventory list is null or empty");
                 }
-                inventoryList.forEach(x -> {
-                    itemWiseReport.setItemNo(x.getId());
-                    itemWiseReport.setItemName(x.getItem());
-                    itemWiseReport.setItemCode(x.getItemCode());
-                    BigDecimal salePrice = new BigDecimal(x.getSalePrice());
-                    BigDecimal saleAmount = salePrice.multiply(new BigDecimal(x.getQuantity()));
-                    itemWiseReport.setSaleAmount(String.valueOf(saleAmount)); // Set sale amount
-                    itemWiseReport.setSaleQuantity(String.valueOf(x.getQuantity()));
-                    itemWiseReport.setSaleIncDec("-");
+                case CREDIT_NOTE -> {
+                    //Party
+                    statements.setSpNo(salePurchaseReturn.getId());
+                    statements.setBillType(CREDIT_NOTE);
+                    statements.setDebit(salePurchase.getAmountReceived());
+                    statements.setCredit(salePurchase.getTotalAmount());
+                    statements.setReceivedBalance(salePurchase.getAmountReceived());
+                    statements.setBalanceAmount(salePurchase.getBalanceAmount());
+                    statements.setTotalAmount(salePurchase.getTotalAmount());
+                    transaction.setTransactionType(CREDIT_NOTE);
+                    transaction.setSpNo(salePurchaseReturn.getId());
+                    transaction.setAmount(salePurchase.getTotalAmount());
+                    transaction.setStatus(salePurchase.getStatus());
+                    itemWiseReport.setSpNo(salePurchaseReturn.getId());
+                    //Inventory
+                    stockDetails.setSpNo(salePurchaseReturn.getId());
+                    stockDetails.setBillType(SALES_RETURN);
+                    stockDetails.setQuantityType("+");
+                    stockDetails.setQuantity(null);
+                    stockDetails.setClosingStock(null);
+
+                    partyWiseReport.setPartyNo(salePurchaseReturn.getPartyId() != null ? Integer.valueOf(salePurchaseReturn.getPartyId()) : 0);
+                    partyWiseReport.setPartyName(salePurchaseReturn.getPartyName());
+                    partyWiseReport.setSpNo(salePurchaseReturn.getId());
+                    partyWiseReport.setSaleIncDec(null);
+                    partyWiseReport.setSaleAmount(null);
+                    partyWiseReport.setSaleQuantity(null);
+                    partyWiseReport.setPurchaseAmount(null);
+                    partyWiseReport.setPurchaseIncDec(null);
+                    partyWiseReport.setPurchaseQuantity(null);
+                    Type inventoryListType = new TypeToken<List<Inventory>>() {
+                    }.getType();
+                    List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);
+                    if (inventoryList == null || inventoryList.isEmpty()) {
+                        System.out.println("Invalid input: inventory list is null or empty");
+                    }
+                    inventoryList.forEach(x -> {
+                        itemWiseReport.setItemNo(x.getId());
+                        itemWiseReport.setItemName(x.getItem());
+                        itemWiseReport.setItemCode(x.getItemCode());
+                        BigDecimal salePrice = new BigDecimal(x.getSalePrice());
+                        BigDecimal saleAmount = salePrice.multiply(new BigDecimal(x.getQuantity()));
+                        itemWiseReport.setSaleAmount(String.valueOf(saleAmount)); // Set sale amount
+                        itemWiseReport.setSaleQuantity(String.valueOf(x.getQuantity()));
+                        itemWiseReport.setSaleIncDec("-");
                    /* itemWiseReport.setPurchaseAmount();
                     itemWiseReport.setPurchaseQuantity();
                     itemWiseReport.setPurchaseIncDec();*/
 
-                    //Inventory
-                    if (StringUtils.isNotBlank(x.getItemCode())) {
+                        //Inventory
                         if (StringUtils.isNotBlank(x.getItemCode())) {
-                            stockDetails.setItemCode(Integer.valueOf(x.getItemCode()));
+                            if (StringUtils.isNotBlank(x.getItemCode())) {
+                                stockDetails.setItemCode(Integer.valueOf(x.getItemCode()));
+                            }
                         }
-                    }
-                    stockDetails.setSpNo(salePurchaseReturn.getId());
-                    stockDetails.setBillType(SALES_INVOICE);
-                    stockDetails.setQuantityType("-");
-                    if (x.getQuantity() != null) {
-                        Double quantityDouble = Double.valueOf(x.getQuantity());
-                        Double closingStock = Double.valueOf(x.getTotalStock());
-                        stockDetails.setQuantity(String.valueOf(quantityDouble));
-                        stockDetails.setClosingStock(String.valueOf(closingStock + quantityDouble));
-                    }
-                    ;
-                    CompletableFuture.runAsync(() -> {
-                        Optional<Inventory> inventories = inventoryRepository.findById(x.getId());
-                        if (inventories.isPresent()) {
-                            Inventory inventory = inventories.get();
-                            //Stock
-                            List<StockDetails> stockDetailsList = new ArrayList<>();
-                            stockDetailsList.addAll(inventory.getStockDetailsList());
-                            stockDetailsList.addAll(Arrays.asList(stockDetails));
+                        stockDetails.setSpNo(salePurchaseReturn.getId());
+                        stockDetails.setBillType(SALES_INVOICE);
+                        stockDetails.setQuantityType("-");
+                        if (x.getQuantity() != null) {
+                            Double quantityDouble = Double.valueOf(x.getQuantity());
+                            Double closingStock = Double.valueOf(x.getTotalStock());
+                            stockDetails.setQuantity(String.valueOf(quantityDouble));
+                            stockDetails.setClosingStock(String.valueOf(closingStock + quantityDouble));
+                        }
+                        ;
+                        CompletableFuture.runAsync(() -> {
+                            Optional<Inventory> inventories = inventoryRepository.findById(x.getId());
+                            if (inventories.isPresent()) {
+                                Inventory inventory = inventories.get();
+                                //Stock
+                                List<StockDetails> stockDetailsList = new ArrayList<>();
+                                stockDetailsList.addAll(inventory.getStockDetailsList());
+                                stockDetailsList.addAll(Arrays.asList(stockDetails));
 
-                            inventory.setStockDetailsList(stockDetailsList);
-                            inventory.setTotalStock(stockDetails.getClosingStock());
-                            inventoryRepository.save(inventory);
-                        }
+                                inventory.setStockDetailsList(stockDetailsList);
+                                inventory.setTotalStock(stockDetails.getClosingStock());
+                                inventoryRepository.save(inventory);
+                            }
+                        });
                     });
-                });
-            }
-            case DELIVERY_CHALLAN -> {
-                //Party
-                transaction.setTransactionType(DELIVERY_CHALLAN);
-                transaction.setSpNo(salePurchaseReturn.getId());
-                transaction.setAmount(salePurchase.getTotalAmount());
-                transaction.setStatus("NA");
-            }
-            case PROFORMA_INVOICE -> {
-                //Party
-                transaction.setTransactionType(PROFORMA_INVOICE);
-                transaction.setSpNo(salePurchaseReturn.getId());
-                transaction.setAmount(salePurchase.getTotalAmount());
-                transaction.setStatus("NA");
-            }
-            case QUOTATION -> {
-                //Party
-                transaction.setTransactionType(QUOTATION);
-                transaction.setSpNo(salePurchaseReturn.getId());
-                transaction.setAmount(salePurchase.getTotalAmount());
-                transaction.setStatus("NA");
-            }
-            case PURCHASE_RETURN -> {
-                //Party
-                statements.setSpNo(salePurchaseReturn.getId());
-                statements.setBillType(PURCHASE_RETURN);
-                statements.setDebit(salePurchase.getTotalAmount());
-                statements.setCredit(salePurchase.getAmountReceived());
-                statements.setReceivedBalance(salePurchase.getAmountReceived());
-                statements.setBalanceAmount(salePurchase.getBalanceAmount());
-                statements.setTotalAmount(salePurchase.getTotalAmount());
-                transaction.setTransactionType(PURCHASE_RETURN);
-                transaction.setSpNo(salePurchaseReturn.getId());
-                transaction.setAmount(salePurchase.getTotalAmount());
-                transaction.setStatus(salePurchase.getStatus());
-                itemWiseReport.setSpNo(salePurchaseReturn.getId());
-                //Inventory
-                stockDetails.setSpNo(salePurchaseReturn.getId());
-                stockDetails.setBillType(PURCHASE_RETURN);
-                stockDetails.setQuantityType("-");
-                stockDetails.setQuantity(null);
-                stockDetails.setClosingStock(null);
-
-                partyWiseReport.setPartyNo(salePurchaseReturn.getPartyId() != null ? Integer.valueOf(salePurchaseReturn.getPartyId()) : 0);
-                partyWiseReport.setPartyName(salePurchaseReturn.getPartyName());
-                partyWiseReport.setSpNo(salePurchaseReturn.getId());
-                partyWiseReport.setSaleIncDec(null);
-                partyWiseReport.setSaleAmount(null);
-                partyWiseReport.setSaleQuantity(null);
-                partyWiseReport.setPurchaseAmount(null);
-                partyWiseReport.setPurchaseIncDec(null);
-                partyWiseReport.setPurchaseQuantity(null);
-                Type inventoryListType = new TypeToken<List<Inventory>>() {
-                }.getType();
-                List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);
-                if (inventoryList == null || inventoryList.isEmpty()) {
-                    System.out.println("Invalid input: inventory list is null or empty");
                 }
-                inventoryList.forEach(x -> {
-                    itemWiseReport.setItemNo(x.getId());
-                    itemWiseReport.setItemName(x.getItem());
-                    itemWiseReport.setItemCode(x.getItemCode());
-                    BigDecimal salePrice = new BigDecimal(x.getSalePrice());
-                    BigDecimal saleAmount = salePrice.multiply(new BigDecimal(x.getQuantity()));
-                    itemWiseReport.setPurchaseAmount(String.valueOf(saleAmount)); // Set sale amount
-                    itemWiseReport.setPurchaseQuantity(String.valueOf(x.getQuantity()));
-                    itemWiseReport.setSaleIncDec("-");
+                case DELIVERY_CHALLAN -> {
+                    //Party
+                    transaction.setTransactionType(DELIVERY_CHALLAN);
+                    transaction.setSpNo(salePurchaseReturn.getId());
+                    transaction.setAmount(salePurchase.getTotalAmount());
+                    transaction.setStatus("NA");
+                }
+                case PROFORMA_INVOICE -> {
+                    //Party
+                    transaction.setTransactionType(PROFORMA_INVOICE);
+                    transaction.setSpNo(salePurchaseReturn.getId());
+                    transaction.setAmount(salePurchase.getTotalAmount());
+                    transaction.setStatus("NA");
+                }
+                case QUOTATION -> {
+                    //Party
+                    transaction.setTransactionType(QUOTATION);
+                    transaction.setSpNo(salePurchaseReturn.getId());
+                    transaction.setAmount(salePurchase.getTotalAmount());
+                    transaction.setStatus("NA");
+                }
+                case PURCHASE_RETURN -> {
+                    //Party
+                    statements.setSpNo(salePurchaseReturn.getId());
+                    statements.setBillType(PURCHASE_RETURN);
+                    statements.setDebit(salePurchase.getTotalAmount());
+                    statements.setCredit(salePurchase.getAmountReceived());
+                    statements.setReceivedBalance(salePurchase.getAmountReceived());
+                    statements.setBalanceAmount(salePurchase.getBalanceAmount());
+                    statements.setTotalAmount(salePurchase.getTotalAmount());
+                    transaction.setTransactionType(PURCHASE_RETURN);
+                    transaction.setSpNo(salePurchaseReturn.getId());
+                    transaction.setAmount(salePurchase.getTotalAmount());
+                    transaction.setStatus(salePurchase.getStatus());
+                    itemWiseReport.setSpNo(salePurchaseReturn.getId());
+                    //Inventory
+                    stockDetails.setSpNo(salePurchaseReturn.getId());
+                    stockDetails.setBillType(PURCHASE_RETURN);
+                    stockDetails.setQuantityType("-");
+                    stockDetails.setQuantity(null);
+                    stockDetails.setClosingStock(null);
+
+                    partyWiseReport.setPartyNo(salePurchaseReturn.getPartyId() != null ? Integer.valueOf(salePurchaseReturn.getPartyId()) : 0);
+                    partyWiseReport.setPartyName(salePurchaseReturn.getPartyName());
+                    partyWiseReport.setSpNo(salePurchaseReturn.getId());
+                    partyWiseReport.setSaleIncDec(null);
+                    partyWiseReport.setSaleAmount(null);
+                    partyWiseReport.setSaleQuantity(null);
+                    partyWiseReport.setPurchaseAmount(null);
+                    partyWiseReport.setPurchaseIncDec(null);
+                    partyWiseReport.setPurchaseQuantity(null);
+                    Type inventoryListType = new TypeToken<List<Inventory>>() {
+                    }.getType();
+                    List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);
+                    if (inventoryList == null || inventoryList.isEmpty()) {
+                        System.out.println("Invalid input: inventory list is null or empty");
+                    }
+                    inventoryList.forEach(x -> {
+                        itemWiseReport.setItemNo(x.getId());
+                        itemWiseReport.setItemName(x.getItem());
+                        itemWiseReport.setItemCode(x.getItemCode());
+                        BigDecimal salePrice = new BigDecimal(x.getSalePrice());
+                        BigDecimal saleAmount = salePrice.multiply(new BigDecimal(x.getQuantity()));
+                        itemWiseReport.setPurchaseAmount(String.valueOf(saleAmount)); // Set sale amount
+                        itemWiseReport.setPurchaseQuantity(String.valueOf(x.getQuantity()));
+                        itemWiseReport.setSaleIncDec("-");
                    /* itemWiseReport.setPurchaseAmount();
                     itemWiseReport.setPurchaseQuantity();
                     itemWiseReport.setPurchaseIncDec();*/
 
-                    //Inventory
-                    if (StringUtils.isNotBlank(x.getItemCode())) {
+                        //Inventory
                         if (StringUtils.isNotBlank(x.getItemCode())) {
-                            stockDetails.setItemCode(Integer.valueOf(x.getItemCode()));
+                            if (StringUtils.isNotBlank(x.getItemCode())) {
+                                stockDetails.setItemCode(Integer.valueOf(x.getItemCode()));
+                            }
                         }
-                    }
-                    stockDetails.setSpNo(salePurchaseReturn.getId());
-                    stockDetails.setBillType(SALES_INVOICE);
-                    stockDetails.setQuantityType("-");
-                    if (x.getQuantity() != null) {
-                        Double quantityDouble = Double.valueOf(x.getQuantity());
-                        Double closingStock = Double.valueOf(x.getTotalStock());
-                        stockDetails.setQuantity(String.valueOf(quantityDouble));
-                        stockDetails.setClosingStock(String.valueOf(closingStock - quantityDouble));
-                    }
-                    ;
-                    CompletableFuture.runAsync(() -> {
-                        Optional<Inventory> inventories = inventoryRepository.findById(x.getId());
-                        if (inventories.isPresent()) {
-                            Inventory inventory = inventories.get();
-                            //Stock
-                            List<StockDetails> stockDetailsList = new ArrayList<>();
-                            stockDetailsList.addAll(inventory.getStockDetailsList());
-                            stockDetailsList.addAll(Arrays.asList(stockDetails));
+                        stockDetails.setSpNo(salePurchaseReturn.getId());
+                        stockDetails.setBillType(SALES_INVOICE);
+                        stockDetails.setQuantityType("-");
+                        if (x.getQuantity() != null) {
+                            Double quantityDouble = Double.valueOf(x.getQuantity());
+                            Double closingStock = Double.valueOf(x.getTotalStock());
+                            stockDetails.setQuantity(String.valueOf(quantityDouble));
+                            stockDetails.setClosingStock(String.valueOf(closingStock - quantityDouble));
+                        }
+                        ;
+                        CompletableFuture.runAsync(() -> {
+                            Optional<Inventory> inventories = inventoryRepository.findById(x.getId());
+                            if (inventories.isPresent()) {
+                                Inventory inventory = inventories.get();
+                                //Stock
+                                List<StockDetails> stockDetailsList = new ArrayList<>();
+                                stockDetailsList.addAll(inventory.getStockDetailsList());
+                                stockDetailsList.addAll(Arrays.asList(stockDetails));
 
-                            inventory.setStockDetailsList(stockDetailsList);
-                            inventory.setTotalStock(stockDetails.getClosingStock());
-                            inventoryRepository.save(inventory);
-                        }
+                                inventory.setStockDetailsList(stockDetailsList);
+                                inventory.setTotalStock(stockDetails.getClosingStock());
+                                inventoryRepository.save(inventory);
+                            }
+                        });
                     });
-                });
-            }
-            case PURCHASE_INVOICE -> {
-                //Party
-                statements.setSpNo(salePurchaseReturn.getId());
-                statements.setBillType(PURCHASE_INVOICE);
-                statements.setDebit(salePurchase.getAmountReceived());
-                statements.setCredit(salePurchase.getTotalAmount());
-                statements.setReceivedBalance(salePurchase.getAmountReceived());
-                statements.setBalanceAmount(salePurchase.getBalanceAmount());
-                statements.setTotalAmount(salePurchase.getTotalAmount());
-                transaction.setTransactionType(PURCHASE_INVOICE);
-                transaction.setSpNo(salePurchaseReturn.getId());
-                transaction.setAmount(salePurchase.getTotalAmount());
-                transaction.setStatus(salePurchase.getStatus());
-                itemWiseReport.setSpNo(salePurchaseReturn.getId());
-                //Inventory
-                stockDetails.setSpNo(salePurchaseReturn.getId());
-                stockDetails.setBillType(PURCHASE_INVOICE);
-                stockDetails.setQuantityType("+");
-                stockDetails.setQuantity(null);
-                stockDetails.setClosingStock(null);
-
-                partyWiseReport.setPartyNo(salePurchaseReturn.getPartyId() != null ? Integer.valueOf(salePurchaseReturn.getPartyId()) : 0);
-                partyWiseReport.setPartyName(salePurchaseReturn.getPartyName());
-                partyWiseReport.setSpNo(salePurchaseReturn.getId());
-                partyWiseReport.setSaleIncDec(null);
-                partyWiseReport.setSaleAmount(null);
-                partyWiseReport.setSaleQuantity(null);
-                partyWiseReport.setPurchaseAmount(null);
-                partyWiseReport.setPurchaseIncDec(null);
-                partyWiseReport.setPurchaseQuantity(null);
-                Type inventoryListType = new TypeToken<List<Inventory>>() {
-                }.getType();
-                List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);
-                if (inventoryList == null || inventoryList.isEmpty()) {
-                    System.out.println("Invalid input: inventory list is null or empty");
                 }
-                inventoryList.forEach(x -> {
-                    itemWiseReport.setItemNo(x.getId());
-                    itemWiseReport.setItemName(x.getItem());
-                    itemWiseReport.setItemCode(x.getItemCode());
-                    BigDecimal salePrice = new BigDecimal(x.getSalePrice());
-                    BigDecimal saleAmount = salePrice.multiply(new BigDecimal(x.getQuantity()));
-                    itemWiseReport.setPurchaseAmount(String.valueOf(saleAmount)); // Set sale amount
-                    itemWiseReport.setPurchaseQuantity(String.valueOf(x.getQuantity()));
-                    itemWiseReport.setSaleIncDec("-");
+                case PURCHASE_INVOICE -> {
+                    //Party
+                    statements.setSpNo(salePurchaseReturn.getId());
+                    statements.setBillType(PURCHASE_INVOICE);
+                    statements.setDebit(salePurchase.getAmountReceived());
+                    statements.setCredit(salePurchase.getTotalAmount());
+                    statements.setReceivedBalance(salePurchase.getAmountReceived());
+                    statements.setBalanceAmount(salePurchase.getBalanceAmount());
+                    statements.setTotalAmount(salePurchase.getTotalAmount());
+                    transaction.setTransactionType(PURCHASE_INVOICE);
+                    transaction.setSpNo(salePurchaseReturn.getId());
+                    transaction.setAmount(salePurchase.getTotalAmount());
+                    transaction.setStatus(salePurchase.getStatus());
+                    itemWiseReport.setSpNo(salePurchaseReturn.getId());
+                    //Inventory
+                    stockDetails.setSpNo(salePurchaseReturn.getId());
+                    stockDetails.setBillType(PURCHASE_INVOICE);
+                    stockDetails.setQuantityType("+");
+                    stockDetails.setQuantity(null);
+                    stockDetails.setClosingStock(null);
+
+                    partyWiseReport.setPartyNo(salePurchaseReturn.getPartyId() != null ? Integer.valueOf(salePurchaseReturn.getPartyId()) : 0);
+                    partyWiseReport.setPartyName(salePurchaseReturn.getPartyName());
+                    partyWiseReport.setSpNo(salePurchaseReturn.getId());
+                    partyWiseReport.setSaleIncDec(null);
+                    partyWiseReport.setSaleAmount(null);
+                    partyWiseReport.setSaleQuantity(null);
+                    partyWiseReport.setPurchaseAmount(null);
+                    partyWiseReport.setPurchaseIncDec(null);
+                    partyWiseReport.setPurchaseQuantity(null);
+                    Type inventoryListType = new TypeToken<List<Inventory>>() {
+                    }.getType();
+                    List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);
+                    if (inventoryList == null || inventoryList.isEmpty()) {
+                        System.out.println("Invalid input: inventory list is null or empty");
+                    }
+                    inventoryList.forEach(x -> {
+                        itemWiseReport.setItemNo(x.getId());
+                        itemWiseReport.setItemName(x.getItem());
+                        itemWiseReport.setItemCode(x.getItemCode());
+                        BigDecimal salePrice = new BigDecimal(x.getSalePrice());
+                        BigDecimal saleAmount = salePrice.multiply(new BigDecimal(x.getQuantity()));
+                        itemWiseReport.setPurchaseAmount(String.valueOf(saleAmount)); // Set sale amount
+                        itemWiseReport.setPurchaseQuantity(String.valueOf(x.getQuantity()));
+                        itemWiseReport.setSaleIncDec("-");
                    /* itemWiseReport.setPurchaseAmount();
                     itemWiseReport.setPurchaseQuantity();
                     itemWiseReport.setPurchaseIncDec();*/
 
-                    //Inventory
-                    if (StringUtils.isNotBlank(x.getItemCode())) {
+                        //Inventory
                         if (StringUtils.isNotBlank(x.getItemCode())) {
-                            stockDetails.setItemCode(Integer.valueOf(x.getItemCode()));
+                            if (StringUtils.isNotBlank(x.getItemCode())) {
+                                stockDetails.setItemCode(Integer.valueOf(x.getItemCode()));
+                            }
                         }
-                    }
-                    stockDetails.setSpNo(salePurchaseReturn.getId());
-                    stockDetails.setBillType(SALES_INVOICE);
-                    stockDetails.setQuantityType("-");
-                    if (x.getQuantity() != null) {
-                        Double quantityDouble = Double.valueOf(x.getQuantity());
-                        Double closingStock = Double.valueOf(x.getTotalStock());
-                        stockDetails.setQuantity(String.valueOf(quantityDouble));
-                        stockDetails.setClosingStock(String.valueOf(closingStock + quantityDouble));
-                    }
-                    ;
-                    CompletableFuture.runAsync(() -> {
-                        Optional<Inventory> inventories = inventoryRepository.findById(x.getId());
-                        if (inventories.isPresent()) {
-                            Inventory inventory = inventories.get();
-                            //Stock
-                            List<StockDetails> stockDetailsList = new ArrayList<>();
-                            stockDetailsList.addAll(inventory.getStockDetailsList());
-                            stockDetailsList.addAll(Arrays.asList(stockDetails));
+                        stockDetails.setSpNo(salePurchaseReturn.getId());
+                        stockDetails.setBillType(SALES_INVOICE);
+                        stockDetails.setQuantityType("-");
+                        if (x.getQuantity() != null) {
+                            Double quantityDouble = Double.valueOf(x.getQuantity());
+                            Double closingStock = Double.valueOf(x.getTotalStock());
+                            stockDetails.setQuantity(String.valueOf(quantityDouble));
+                            stockDetails.setClosingStock(String.valueOf(closingStock + quantityDouble));
+                        }
+                        ;
+                        CompletableFuture.runAsync(() -> {
+                            Optional<Inventory> inventories = inventoryRepository.findById(x.getId());
+                            if (inventories.isPresent()) {
+                                Inventory inventory = inventories.get();
+                                //Stock
+                                List<StockDetails> stockDetailsList = new ArrayList<>();
+                                stockDetailsList.addAll(inventory.getStockDetailsList());
+                                stockDetailsList.addAll(Arrays.asList(stockDetails));
 
-                            inventory.setStockDetailsList(stockDetailsList);
-                            inventory.setTotalStock(stockDetails.getClosingStock());
-                            inventoryRepository.save(inventory);
-                        }
+                                inventory.setStockDetailsList(stockDetailsList);
+                                inventory.setTotalStock(stockDetails.getClosingStock());
+                                inventoryRepository.save(inventory);
+                            }
+                        });
                     });
-                });
-            }
-            case PURCHASE_ORDER -> {
-                //Party
-                transaction.setTransactionType(PURCHASE_ORDER);
-                transaction.setSpNo(salePurchaseReturn.getId());
-                transaction.setAmount(salePurchase.getTotalAmount());
-                transaction.setStatus("NA");
-            }
-            case DEBIT_NOTE -> {
-                //Party
-                statements.setSpNo(salePurchaseReturn.getId());
-                statements.setBillType(DEBIT_NOTE);
-                statements.setDebit(salePurchase.getTotalAmount());
-                statements.setCredit(salePurchase.getAmountReceived());
-                statements.setReceivedBalance(salePurchase.getAmountReceived());
-                statements.setBalanceAmount(salePurchase.getBalanceAmount());
-                statements.setTotalAmount(salePurchase.getTotalAmount());
-                transaction.setTransactionType(DEBIT_NOTE);
-                transaction.setSpNo(salePurchaseReturn.getId());
-                transaction.setAmount(salePurchase.getTotalAmount());
-                transaction.setStatus(salePurchase.getStatus());
-                itemWiseReport.setSpNo(salePurchaseReturn.getId());
-                //Inventory
-                stockDetails.setSpNo(salePurchaseReturn.getId());
-                stockDetails.setBillType(DEBIT_NOTE);
-                stockDetails.setQuantityType("-");
-                stockDetails.setQuantity(null);
-                stockDetails.setClosingStock(null);
-
-                partyWiseReport.setPartyNo(salePurchaseReturn.getPartyId() != null ? Integer.valueOf(salePurchaseReturn.getPartyId()) : 0);
-                partyWiseReport.setPartyName(salePurchaseReturn.getPartyName());
-                partyWiseReport.setSpNo(salePurchaseReturn.getId());
-                partyWiseReport.setSaleIncDec(null);
-                partyWiseReport.setSaleAmount(null);
-                partyWiseReport.setSaleQuantity(null);
-                partyWiseReport.setPurchaseAmount(null);
-                partyWiseReport.setPurchaseIncDec(null);
-                partyWiseReport.setPurchaseQuantity(null);
-                Type inventoryListType = new TypeToken<List<Inventory>>() {
-                }.getType();
-                List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);
-                if (inventoryList == null || inventoryList.isEmpty()) {
-                    System.out.println("Invalid input: inventory list is null or empty");
                 }
-                inventoryList.forEach(x -> {
-                    itemWiseReport.setItemNo(x.getId());
-                    itemWiseReport.setItemName(x.getItem());
-                    itemWiseReport.setItemCode(x.getItemCode());
-                    BigDecimal salePrice = new BigDecimal(x.getSalePrice());
-                    BigDecimal saleAmount = salePrice.multiply(new BigDecimal(x.getQuantity()));
-                    itemWiseReport.setPurchaseAmount(String.valueOf(saleAmount)); // Set sale amount
-                    itemWiseReport.setPurchaseQuantity(String.valueOf(x.getQuantity()));
-                    itemWiseReport.setSaleIncDec("+");
+                case PURCHASE_ORDER -> {
+                    //Party
+                    transaction.setTransactionType(PURCHASE_ORDER);
+                    transaction.setSpNo(salePurchaseReturn.getId());
+                    transaction.setAmount(salePurchase.getTotalAmount());
+                    transaction.setStatus("NA");
+                }
+                case DEBIT_NOTE -> {
+                    //Party
+                    statements.setSpNo(salePurchaseReturn.getId());
+                    statements.setBillType(DEBIT_NOTE);
+                    statements.setDebit(salePurchase.getTotalAmount());
+                    statements.setCredit(salePurchase.getAmountReceived());
+                    statements.setReceivedBalance(salePurchase.getAmountReceived());
+                    statements.setBalanceAmount(salePurchase.getBalanceAmount());
+                    statements.setTotalAmount(salePurchase.getTotalAmount());
+                    transaction.setTransactionType(DEBIT_NOTE);
+                    transaction.setSpNo(salePurchaseReturn.getId());
+                    transaction.setAmount(salePurchase.getTotalAmount());
+                    transaction.setStatus(salePurchase.getStatus());
+                    itemWiseReport.setSpNo(salePurchaseReturn.getId());
+                    //Inventory
+                    stockDetails.setSpNo(salePurchaseReturn.getId());
+                    stockDetails.setBillType(DEBIT_NOTE);
+                    stockDetails.setQuantityType("-");
+                    stockDetails.setQuantity(null);
+                    stockDetails.setClosingStock(null);
+
+                    partyWiseReport.setPartyNo(salePurchaseReturn.getPartyId() != null ? Integer.valueOf(salePurchaseReturn.getPartyId()) : 0);
+                    partyWiseReport.setPartyName(salePurchaseReturn.getPartyName());
+                    partyWiseReport.setSpNo(salePurchaseReturn.getId());
+                    partyWiseReport.setSaleIncDec(null);
+                    partyWiseReport.setSaleAmount(null);
+                    partyWiseReport.setSaleQuantity(null);
+                    partyWiseReport.setPurchaseAmount(null);
+                    partyWiseReport.setPurchaseIncDec(null);
+                    partyWiseReport.setPurchaseQuantity(null);
+                    Type inventoryListType = new TypeToken<List<Inventory>>() {
+                    }.getType();
+                    List<Inventory> inventoryList = new Gson().fromJson(salePurchase.getItems(), inventoryListType);
+                    if (inventoryList == null || inventoryList.isEmpty()) {
+                        System.out.println("Invalid input: inventory list is null or empty");
+                    }
+                    inventoryList.forEach(x -> {
+                        itemWiseReport.setItemNo(x.getId());
+                        itemWiseReport.setItemName(x.getItem());
+                        itemWiseReport.setItemCode(x.getItemCode());
+                        BigDecimal salePrice = new BigDecimal(x.getSalePrice());
+                        BigDecimal saleAmount = salePrice.multiply(new BigDecimal(x.getQuantity()));
+                        itemWiseReport.setPurchaseAmount(String.valueOf(saleAmount)); // Set sale amount
+                        itemWiseReport.setPurchaseQuantity(String.valueOf(x.getQuantity()));
+                        itemWiseReport.setSaleIncDec("+");
                    /* itemWiseReport.setPurchaseAmount();
                     itemWiseReport.setPurchaseQuantity();
                     itemWiseReport.setPurchaseIncDec();*/
 
-                    //Inventory
-                    if (StringUtils.isNotBlank(x.getItemCode())) {
+                        //Inventory
                         if (StringUtils.isNotBlank(x.getItemCode())) {
-                            stockDetails.setItemCode(Integer.valueOf(x.getItemCode()));
+                            if (StringUtils.isNotBlank(x.getItemCode())) {
+                                stockDetails.setItemCode(Integer.valueOf(x.getItemCode()));
+                            }
                         }
-                    }
-                    stockDetails.setSpNo(salePurchaseReturn.getId());
-                    stockDetails.setBillType(SALES_INVOICE);
-                    stockDetails.setQuantityType("-");
-                    Double closingStock;
-                    if (x.getQuantity() != null) {
-                        Double quantityDouble = Double.valueOf(x.getQuantity());
-                        closingStock = Double.valueOf(x.getTotalStock());
-                        stockDetails.setQuantity(String.valueOf(quantityDouble));
-                        stockDetails.setClosingStock(String.valueOf(closingStock - quantityDouble));
-                    }
-                    CompletableFuture.runAsync(() -> {
-                        Optional<Inventory> inventories = inventoryRepository.findById(x.getId());
-                        if (inventories.isPresent()) {
-                            Inventory inventory = inventories.get();
-                            //Stock Details
-                            List<StockDetails> stockDetailsList = new ArrayList<>();
-                            stockDetailsList.addAll(inventory.getStockDetailsList());
-                            stockDetailsList.addAll(Arrays.asList(stockDetails));
+                        stockDetails.setSpNo(salePurchaseReturn.getId());
+                        stockDetails.setBillType(SALES_INVOICE);
+                        stockDetails.setQuantityType("-");
+                        Double closingStock;
+                        if (x.getQuantity() != null) {
+                            Double quantityDouble = Double.valueOf(x.getQuantity());
+                            closingStock = Double.valueOf(x.getTotalStock());
+                            stockDetails.setQuantity(String.valueOf(quantityDouble));
+                            stockDetails.setClosingStock(String.valueOf(closingStock - quantityDouble));
+                        }
+                        CompletableFuture.runAsync(() -> {
+                            Optional<Inventory> inventories = inventoryRepository.findById(x.getId());
+                            if (inventories.isPresent()) {
+                                Inventory inventory = inventories.get();
+                                //Stock Details
+                                List<StockDetails> stockDetailsList = new ArrayList<>();
+                                stockDetailsList.addAll(inventory.getStockDetailsList());
+                                stockDetailsList.addAll(Arrays.asList(stockDetails));
 
-                            inventory.setStockDetailsList(stockDetailsList);
-                            inventory.setTotalStock(stockDetails.getClosingStock());
-                            inventoryRepository.save(inventory);
-                        }
+                                inventory.setStockDetailsList(stockDetailsList);
+                                inventory.setTotalStock(stockDetails.getClosingStock());
+                                inventoryRepository.save(inventory);
+                            }
+                        });
                     });
-                });
+                }
             }
+            CompletableFuture.runAsync(() -> {
+                Optional<Partner> partner = partnerRepository.findById(Integer.valueOf(salePurchase.getPartyId()));
+                if (partner.isPresent()) {
+                    try {
+                        Partner actualPartner = partner.get();
+
+                        List<Transactions> transactionsList = new ArrayList<>();
+                        List<Statements> statementsList = new ArrayList<>();
+                        List<ItemWiseReport> itemWiseReportList = new ArrayList<>();
+
+                        transactionsList.addAll(actualPartner.getTransactionsList());
+                        transactionsList.addAll(Arrays.asList(transaction));
+
+                        statementsList.addAll(actualPartner.getStatementsList());
+                        statementsList.addAll(Arrays.asList(statements));
+
+                        itemWiseReportList.addAll(actualPartner.getItemWiseReportList());
+                        itemWiseReportList.addAll(Arrays.asList(itemWiseReport));
+
+                        actualPartner.setTransactionsList(transactionsList);
+                        actualPartner.setStatementsList(statementsList);
+                        actualPartner.setItemWiseReportList(itemWiseReportList);
+                        partnerRepository.save(actualPartner);
+                    } catch (Exception exception) {
+                        System.out.println("Exception " + exception);
+                    }
+                }
+            });
+        } else {
+            //Write a code  for handling update case....
         }
-
-        CompletableFuture.runAsync(() -> {
-            Optional<Partner> partner = partnerRepository.findById(Integer.valueOf(salePurchase.getPartyId()));
-            if (partner.isPresent()) {
-                try {
-                    Partner actualPartner = partner.get();
-
-                    List<Transactions> transactionsList = new ArrayList<>();
-                    List<Statements> statementsList = new ArrayList<>();
-                    List<ItemWiseReport> itemWiseReportList = new ArrayList<>();
-
-                    transactionsList.addAll(actualPartner.getTransactionsList());
-                    transactionsList.addAll(Arrays.asList(transaction));
-
-                    statementsList.addAll(actualPartner.getStatementsList());
-                    statementsList.addAll(Arrays.asList(statements));
-
-                    itemWiseReportList.addAll(actualPartner.getItemWiseReportList());
-                    itemWiseReportList.addAll(Arrays.asList(itemWiseReport));
-
-                    actualPartner.setTransactionsList(transactionsList);
-                    actualPartner.setStatementsList(statementsList);
-                    actualPartner.setItemWiseReportList(itemWiseReportList);
-                    partnerRepository.save(actualPartner);
-                } catch (Exception exception) {
-                    System.out.println("Exception " + exception);
-                }
-            }
-        });
-
         return salePurchaseReturn;
 
 

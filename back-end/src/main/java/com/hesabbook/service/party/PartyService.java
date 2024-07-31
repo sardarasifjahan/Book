@@ -1,6 +1,7 @@
 package com.hesabbook.service.party;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -12,14 +13,17 @@ import com.hesabbook.batch.BatchUpdate;
 import com.hesabbook.entity.party.Address;
 import com.hesabbook.entity.ProductKeyValuePair;
 import com.hesabbook.entity.party.Partner;
+import com.hesabbook.entity.party.Statements;
 import com.hesabbook.repository.AddressRepository;
 import com.hesabbook.repository.PartnerRepository;
 import com.hesabbook.service.ProductKeyValueService;
 import com.hesabbook.utils.BusinessResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static com.hesabbook.utils.CommonUtils.SALES_INVOICE;
 import lombok.SneakyThrows;
 
 @Service
@@ -38,6 +42,18 @@ public class PartyService {
         List<ProductKeyValuePair> productKeyValuePairList = Arrays.asList(extracted("company", entity.getCompany(), entity),
                 extracted("category", entity.getPartyCategory(), entity));
         productKeyValueService.saveAll(productKeyValuePairList);
+        Statements statements = new Statements();
+        statements.setBillType("OPENING_BALANCE");
+        if (StringUtils.isNotBlank(entity.getOpeningBalanceType())) {
+            if (entity.getOpeningBalanceType().equalsIgnoreCase("To Collect"))
+                statements.setDebit(entity.getOpeningBalance());
+            //statements.setCredit(salePurchase.getAmountReceived());
+        } else if (entity.getOpeningBalanceType().equalsIgnoreCase("To Pay")) {
+          //  statements.setDebit(entity);
+            statements.setCredit(entity.getOpeningBalance());
+        }
+        statements.setTotalAmount(entity.getOpeningBalance());
+        entity.setStatementsList(Arrays.asList(statements));
         return partnerRepository.save(entity);
     }
 
@@ -114,7 +130,18 @@ public class PartyService {
         boolean flag = areAllFieldsNull(partner);
         partner.setPrimary_user_id(primaryUserId);
         partner.setSecondary_user_id(secondaryUserId);
-
+        Statements statements = new Statements();
+        statements.setBillType("OPENING_BALANCE");
+        if (StringUtils.isNotBlank(partner.getOpeningBalanceType())) {
+            if (partner.getOpeningBalanceType().equalsIgnoreCase("To Collect"))
+                statements.setDebit(partner.getOpeningBalance());
+            //statements.setCredit(salePurchase.getAmountReceived());
+        } else if (partner.getOpeningBalanceType().equalsIgnoreCase("To Pay")) {
+            //  statements.setDebit(entity);
+            statements.setCredit(partner.getOpeningBalance());
+        }
+        statements.setTotalAmount(partner.getOpeningBalance());
+        partner.setStatementsList(Arrays.asList(statements));
         if (!flag) {
             return partner;
         } else {

@@ -183,6 +183,15 @@ public class InventoryService {
         inventory.setPrimary_user_id(primaryUserId);
         inventory.setSecondary_user_id(secondaryUserId);
 
+
+        StockDetails stockDetails = new StockDetails();
+        stockDetails.setClosingStock(inventory.getTotalStock());
+        stockDetails.setQuantity(inventory.getTotalStock());
+        stockDetails.setBillType("OPENING_STOCK");
+        List<StockDetails> stockDetailsList = new ArrayList<>();
+        stockDetailsList.addAll(Arrays.asList(stockDetails));
+        inventory.setStockDetailsList(stockDetailsList);
+
         if (areAllFieldsNull(inventory)) {
             return null;
         }
