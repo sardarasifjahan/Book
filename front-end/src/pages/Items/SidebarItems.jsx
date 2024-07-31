@@ -1,7 +1,7 @@
 import React from 'react';
-import {Avatar, List, ListItem, ListItemAvatar, ListItemText, TextField} from '@mui/material';
+import { Avatar, List, ListItem, ListItemAvatar, ListItemText, TextField } from '@mui/material';
 
-const SidebarItems = ({inventoryUser, onInventorySelect, selectedInventory, searchTerm, onSearchChange, onInventorySelectName}) => {
+const SidebarItems = ({ inventoryUser, onInventorySelect, selectedInventory, searchTerm, onSearchChange, onInventorySelectName }) => {
     return (
         <div>
             <TextField
@@ -14,7 +14,7 @@ const SidebarItems = ({inventoryUser, onInventorySelect, selectedInventory, sear
             />
             <List>
                 {inventoryUser
-                    .filter(party => party.item.toLowerCase().includes(searchTerm.toLowerCase()))
+                    .filter(party => party.item && party.item.toLowerCase().includes(searchTerm.toLowerCase()))
                     .map((party) => (
                         <ListItem
                             button
@@ -26,9 +26,11 @@ const SidebarItems = ({inventoryUser, onInventorySelect, selectedInventory, sear
                             }}
                         >
                             <ListItemAvatar>
-                                <Avatar src={party.image}/>
+                                <Avatar src={party.image}>
+                                    {!party.image && party.item && party.item.charAt(0)}
+                                </Avatar>
                             </ListItemAvatar>
-                            <ListItemText primary={party.item} secondary={`₹${party.amount}`}/>
+                            <ListItemText primary={party.item} secondary={`Total Stock - ${party.totalStock}`} />
                         </ListItem>
                     ))}
             </List>

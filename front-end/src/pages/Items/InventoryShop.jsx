@@ -66,10 +66,10 @@ export const InventoryShop = () => {
     const [detailFlagId, setDetailFlagId] = React.useState('');
     const {inventoryUser} = useSelector((state) => state.inventoryReducerValue);
     const [expireDate, setExpireDate] = React.useState(
-        dayjs(getDate())
+
     );
     const [mfgDate, setMfgDate] = React.useState(
-        dayjs(getDate())
+
     );
     const handleDetailFlag = () => {
         setDetailFlag((prevState) => !prevState);
