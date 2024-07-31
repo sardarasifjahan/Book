@@ -41,12 +41,12 @@ public class PartyWiseReport implements Serializable {
     private String partyName;
     private String saleIncDec;
 
-    private String saleQuantity;
+    private Double saleQuantity;
     private String saleAmount;
 
     private String purchaseIncDec;
 
-    private String purchaseQuantity;
+    private Double purchaseQuantity;
     private String purchaseAmount;
 
     private Date creationDateTime;
