@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
+    Box,
     Button,
     Grid,
     MenuItem,
     Paper,
-    Select,Box,
+    Select,
     Table,
     TableBody,
     TableCell,
@@ -13,10 +14,10 @@ import {
     TableRow,
     Typography
 } from '@mui/material';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 
-const PartyLedger = ({ partyName }) => {
-    const { partyUser } = useSelector((state) => state.partyReducerValue); // Default to empty array
+const PartyLedger = ({partyName}) => {
+    const {partyUser} = useSelector((state) => state.partyReducerValue); // Default to empty array
     const [transactions, setTransactions] = useState([]);
     const [totalReceivable, setTotalReceivable] = useState(0);
 
@@ -67,15 +68,15 @@ const PartyLedger = ({ partyName }) => {
     }
 
     return (
-        <Box style={{ height: 'calc(100vh - 200px)', overflow: 'auto' }}>
-            <Grid container justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+        <Box style={{height: 'calc(100vh - 200px)', overflow: 'auto'}}>
+            <Grid container justifyContent="space-between" alignItems="center" sx={{mb: 2}}>
                 <Select defaultValue="Last 365 Days">
                     <MenuItem value="Last 30 Days">Last 30 Days</MenuItem>
                     <MenuItem value="Last 90 Days">Last 90 Days</MenuItem>
                     <MenuItem value="Last 365 Days">Last 365 Days</MenuItem>
                 </Select>
                 <div>
-                    <Button variant="outlined" sx={{ mr: 1 }}>Download</Button>
+                    <Button variant="outlined" sx={{mr: 1}}>Download</Button>
                     <Button variant="outlined">Print</Button>
                 </div>
             </Grid>

@@ -10,31 +10,48 @@ import {
     TableCell,
     TableContainer,
     TableHead,
-    TableRow, Typography
+    TableRow,
+    Typography
 } from '@mui/material';
 import {useSelector} from "react-redux";
 
 
 export const InventoryStockDetails = ({itemCode}) => {
     const {inventoryUser} = useSelector((state) => state.inventoryReducerValue);
-    const [partyDetail, setPartyDetail] = useState(null);
+    const [stockDetails, setStockDetails] = useState(null);
 
     useEffect(() => {
         console.log("InventoryStockDetails  ", itemCode);
         const details = inventoryUser.find(item => item.id === itemCode);
-        console.log("Party Details values", details);
-        setPartyDetail(details || null);
+
+        if (details && Array.isArray(details.stockDetailsList)) {
+            const detailRespose = details.stockDetailsList;
+            console.log("Party Details values", details);
+            console.log("Party Details values", details);
+            setStockDetails(detailRespose || null);
+        }
     }, [itemCode, inventoryUser]);
 
     // If partyDetail is null or undefined, show a loading message or some default content
-    if (!partyDetail) {
+    if (!stockDetails) {
         return <Typography>Loading or No details available</Typography>;
     }
 
-    const transactions = [
-        {date: '23-05-2024', type: 'Sales Invoice', quantity: '-2 PCS', invoice: '1', closing: '8 PCS'},
-        {date: '22-05-2024', type: 'Opening Items', quantity: '10 PCS', invoice: '-', closing: '10 PCS'},
-    ];
+    function formatCreationDateTime(dateTime) {
+        if (!dateTime) {
+            return '-'; // Return '-' if dateTime is null, undefined, or an empty string
+        }
+
+        const date = new Date(dateTime);
+        if (isNaN(date.getTime())) {
+            return '-'; // Return '-' if the date is invalid
+        }
+
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
 
     return (
         <div>
@@ -61,13 +78,13 @@ export const InventoryStockDetails = ({itemCode}) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {transactions.map((transaction, index) => (
+                        {stockDetails.map((transaction, index) => (
                             <TableRow key={index}>
-                                <TableCell>{transaction.date}</TableCell>
-                                <TableCell>{transaction.type}</TableCell>
-                                <TableCell>{transaction.quantity}</TableCell>
-                                <TableCell>{transaction.invoice}</TableCell>
-                                <TableCell>{transaction.closing}</TableCell>
+                                <TableCell>{formatCreationDateTime(transaction.creationDateTime)}</TableCell>
+                                <TableCell>{transaction.billType}</TableCell>
+                                <TableCell>{transaction.quantityType}{transaction.quantity}</TableCell>
+                                <TableCell>{transaction.spNo}</TableCell>
+                                <TableCell>{transaction.closingStock}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
