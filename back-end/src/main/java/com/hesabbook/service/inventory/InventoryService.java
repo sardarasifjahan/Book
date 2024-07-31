@@ -1,5 +1,6 @@
 package com.hesabbook.service.inventory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.stream.Collectors;
 
 import com.hesabbook.entity.ProductKeyValuePair;
 import com.hesabbook.entity.inventory.Inventory;
+import com.hesabbook.entity.inventory.StockDetails;
 import com.hesabbook.repository.InventoryRepository;
 import com.hesabbook.service.ProductKeyValueService;
 import com.hesabbook.utils.BusinessResponse;
@@ -90,7 +92,13 @@ public class InventoryService {
             );
             productKeyValueService.saveAll(productKeyValuePairList);
         });
-
+        StockDetails stockDetails = new StockDetails();
+        stockDetails.setClosingStock(accountDetails.getTotalStock());
+        stockDetails.setQuantity(accountDetails.getTotalStock());
+        stockDetails.setBillType("OPENING_STOCK");
+        List<StockDetails> stockDetailsList = new ArrayList<>();
+        stockDetailsList.addAll(Arrays.asList(stockDetails));
+        accountDetails.setStockDetailsList(stockDetailsList);
         return inventoryRepository.save(accountDetails);
     }
 
