@@ -369,7 +369,6 @@ export const Party = () => {
                 {(enable && enableBulk) && (
                     <Box>
                         <Box>
-                            <Button sx={{marginLeft: "1px"}} variant="contained">Party</Button>
                             <Box sx={{display: 'flex', justifyContent: 'space-between', p: 2}}>
                                 <Paper
                                     elevation={3}
