@@ -81,10 +81,10 @@ export const InventoryPartyWiseReport = ({itemCode}) => {
                         {partyWiseReportLists.map((report, index) => (
                             <TableRow key={index}>
                                 <TableCell>{report.partyName}</TableCell>
-                                <TableCell>{report.saleQuantity}</TableCell>
-                                <TableCell>{report.saleAmount}</TableCell>
-                                <TableCell>{report.purchaseQuantity}</TableCell>
-                                <TableCell>{report.purchaseAmount}</TableCell>
+                                <TableCell>{report.saleIncDec}{report.saleQuantity}</TableCell>
+                                <TableCell>{report.saleIncDec}{report.saleAmount}</TableCell>
+                                <TableCell>{report.saleIncDec}{report.purchaseQuantity}</TableCell>
+                                <TableCell>{report.saleIncDec}{report.purchaseAmount}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

@@ -51,10 +51,10 @@ const ItemWiseReport = ({partyName}) => {
                                 <TableRow key={index}>
                                     <TableCell>{transaction.itemName}</TableCell>
                                     <TableCell>{transaction.itemCode}</TableCell>
-                                    <TableCell>{transaction.saleQuantity}</TableCell>
-                                    <TableCell>{transaction.saleAmount}</TableCell>
-                                    <TableCell>{transaction.purchaseQuantity}</TableCell>
-                                    <TableCell>{transaction.purchaseAmount}</TableCell>
+                                    <TableCell>{transaction.saleIncDec} {transaction.saleQuantity}</TableCell>
+                                    <TableCell>{transaction.saleIncDec}{transaction.saleAmount}</TableCell>
+                                    <TableCell>{transaction.saleIncDec}{transaction.purchaseQuantity}</TableCell>
+                                    <TableCell>{transaction.saleIncDec}{transaction.purchaseAmount}</TableCell>
                                 </TableRow>
                             ))
                         ) : (
