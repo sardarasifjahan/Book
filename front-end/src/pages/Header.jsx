@@ -19,6 +19,7 @@ import {LOGIN_PASSWORD} from "./apiendpoint/APIEndPoint";
 import {addLogin} from "../redux/Action";
 import {useDispatch} from "react-redux";
 import {useNavigate} from 'react-router-dom';
+import {useEffect, useState} from "react";
 
 const style = {
     position: 'absolute',
@@ -105,12 +106,25 @@ export const Header = ({onBooleanChange}) => {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+
+    const [scroll, setScroll] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScroll(window.scrollY > 50);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
     return (
         <>
-            <AppBar position='fixed' sx={{backgroundColor: "#212121"}}>
+            <AppBar position="fixed" sx={{ backgroundColor: scroll ? '#212121' : 'transparent', boxShadow: 'none' }}>
                 <Container maxWidth="100%">
                     <Toolbar disableGutters>
-                        <AdbIcon sx={{display: {xs: 'none', md: 'flex'}, mr: 1}}/>
+                        <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
                         <Typography
                             variant="h6"
                             noWrap
@@ -118,7 +132,7 @@ export const Header = ({onBooleanChange}) => {
                             href="#app-bar-with-responsive-menu"
                             sx={{
                                 mr: 2,
-                                display: {xs: 'none', md: 'flex'},
+                                display: { xs: 'none', md: 'flex' },
                                 fontFamily: 'monospace',
                                 fontWeight: 700,
                                 letterSpacing: '.3rem',
@@ -129,7 +143,7 @@ export const Header = ({onBooleanChange}) => {
                             LOGO
                         </Typography>
 
-                        <Box sx={{flexGrow: 1, display: {xs: 'flex', md: 'none'}}}>
+                        <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                             <IconButton
                                 size="large"
                                 aria-label="account of current user"
@@ -138,7 +152,7 @@ export const Header = ({onBooleanChange}) => {
                                 onClick={handleOpenNavMenu}
                                 color="inherit"
                             >
-                                <MenuIcon/>
+                                <MenuIcon />
                             </IconButton>
                             <Menu
                                 id="menu-appbar"
@@ -155,23 +169,24 @@ export const Header = ({onBooleanChange}) => {
                                 open={Boolean(anchorElNav)}
                                 onClose={handleCloseNavMenu}
                                 sx={{
-                                    display: {xs: 'block', md: 'none'},
+                                    display: { xs: 'block', md: 'none' },
                                 }}
                             >
                                 {pages.map((page) => (
                                     <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                        <Typography textAlign="center">{page}</Typography>
+                                        <Typography textAlign="center" sx={{ fontWeight: 'bold' }}>{page}</Typography>
                                     </MenuItem>
                                 ))}
                             </Menu>
                         </Box>
+
                         <Transition in={open} timeout={400}>
                             <Modal
                                 open={open}
                                 onClose={handleClose}
                                 aria-labelledby="modal-modal-title"
                                 aria-describedby="modal-modal-description"
-                                sx={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                                sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
                             >
                                 <Box sx={style}>
                                     <Box
@@ -182,24 +197,22 @@ export const Header = ({onBooleanChange}) => {
                                             alignItems: 'center',
                                         }}
                                     >
-                                        <ModalClose variant="plain" sx={{m: 1}}/>
+                                        <ModalClose variant="plain" sx={{ m: 1 }} />
                                         <Typography component="h1" variant="h5">
                                             {invalidCred ? invalidCred : 'Login/Registration'}
                                         </Typography>
 
-                                        <Box component="form" onSubmit={handleClick} noValidate sx={{mt: 1}}>
+                                        <Box component="form" onSubmit={handleClick} noValidate sx={{ mt: 1 }}>
                                             <TextField
                                                 margin="normal"
                                                 fullWidth
                                                 label="Email Address/ Phone Number"
                                                 onChange={(e) => setPhone(e.target.value)}
-                                                // value={phone}
                                             />
                                             <TextField
                                                 margin="normal"
                                                 label="Password"
                                                 fullWidth
-                                                //value={otpPassword}
                                                 onChange={(e) => setOtpPassword(e.target.value)}
                                             />
                                             <Button
@@ -207,7 +220,7 @@ export const Header = ({onBooleanChange}) => {
                                                 fullWidth
                                                 variant="contained"
                                                 onClick={handleClick}
-                                                sx={{mt: 3, mb: 2, color: "whitesmoke", background: '#212121'}}
+                                                sx={{ mt: 3, mb: 2, color: 'whitesmoke', background: '#212121' }}
                                             >
                                                 Submit
                                             </Button>
@@ -221,16 +234,21 @@ export const Header = ({onBooleanChange}) => {
                             variant="h6"
                             noWrap
                             component="div"
-                            sx={{flexGrow: 1, display: {xs: 'none', sm: 'block'}}}
+                            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
                         >
-                            <AdbIcon sx={{display: {xs: 'flex', md: 'none'}, mr: 1}}/>
+                            <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
                         </Typography>
-                        <Box sx={{flexGrow: 0, display: {xs: 'none', md: 'flex'}}}>
+                        <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
                             {pages.map((page) => (
                                 <Button
                                     key={page}
                                     onClick={() => toggleDrawer(page)}
-                                    sx={{my: 2, color: 'white', display: 'block'}}
+                                    sx={{
+                                        my: 2,
+                                        color: scroll ? 'white' : 'black',
+                                        display: 'block',
+                                        fontWeight: 'bold',
+                                    }}
                                 >
                                     {page}
                                 </Button>
