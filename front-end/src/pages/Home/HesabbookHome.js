@@ -1,12 +1,24 @@
 import {Header} from "../Header";
-import computer from '../../images/computer.jpg'
-import Industry from '../../images/Industry.svg'
+import computer from '../../images/computer.webp'
+import Industry from '../../images/Industry.webp'
 import '../Image.css';
 import Modal from '@mui/joy/Modal';
 import ModalClose from '@mui/joy/ModalClose';
-import {Box, TextField} from "@mui/material";
+import {
+    Box,
+    Button,
+    Card,
+    CardContent,
+    CardHeader,
+    Grid,
+    Link,
+    List,
+    ListItem,
+    ListItemText,
+    TextField,
+    Typography
+} from "@mui/material";
 import {makeStyles} from '@material-ui/core/styles';
-import Typography from "@mui/material/Typography";
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -15,7 +27,6 @@ import EastTwoToneIcon from '@mui/icons-material/EastTwoTone';
 import * as React from 'react';
 import {Transition} from 'react-transition-group';
 import Divider from '@mui/material/Divider';
-import Button from "@mui/material/Button";
 import {Sheet} from "@mui/joy";
 import axios from "axios";
 import {SAVE_TEMP_PASSWORD} from "../apiendpoint/APIEndPoint";
@@ -44,6 +55,7 @@ const style = {
     boxShadow: 24,
     p: 4,
 };
+const MyMemoizedFunction = React.memo(generateRandomAlphaNumeric);
 export const HesabbookHome = ({onBooleanChange}) => {
     const randomValue = generateRandomAlphaNumeric(5);
     const [open, setOpen] = React.useState(false);
@@ -60,7 +72,7 @@ export const HesabbookHome = ({onBooleanChange}) => {
     };
     const handleOpen = (e) => {
         setOpen(true);
-        setOtpPassword(randomValue)
+        setOtpPassword(MyMemoizedFunction(5));
 
     };
     const handleClose = () => {
@@ -105,7 +117,50 @@ export const HesabbookHome = ({onBooleanChange}) => {
             console.error('Error:', error);
         }
     };
-
+    const tiers = [
+        {
+            title: 'Silver',
+            price: '10',
+            description: [
+                '10GB Storage',
+                '10 Emails',
+                '10 Domains',
+                'Endless Support',
+            ],
+            buttonText: 'Sign Up',
+            buttonVariant: 'outlined',
+            color: 'silver',
+            hoverBorderColor: '#c0c0c0', // Silver hover border color
+        },
+        {
+            title: 'Gold',
+            price: '25',
+            description: [
+                '25GB Storage',
+                '25 Emails',
+                '25 Domains',
+                'Endless Support',
+            ],
+            buttonText: 'Sign Up',
+            buttonVariant: 'contained',
+            color: 'gold',
+            hoverBorderColor: '#ffd700', // Gold hover border color
+        },
+        {
+            title: 'Platinum',
+            price: '50',
+            description: [
+                '50GB Storage',
+                '50 Emails',
+                '50 Domains',
+                'Endless Support',
+            ],
+            buttonText: 'Sign Up',
+            buttonVariant: 'outlined',
+            color: 'platinum',
+            hoverBorderColor: '#e5e4e2', // Platinum hover border color
+        },
+    ];
     return (
         <>
             <Header onBooleanChange={onBooleanChange}></Header>
@@ -120,8 +175,10 @@ export const HesabbookHome = ({onBooleanChange}) => {
                 }}>
                     <Paper
                         component="form"
-                        sx={{p: '2px 4px', display: 'flex', alignItems: 'center', width: 400}}
-                    >
+                        sx={{
+                            p: '2px 4px', display: 'flex', alignItems: 'center', width: 400,
+                            border: '2px solid black'
+                        }}>
                         <IconButton sx={{p: '10px'}} aria-label="menu">
                             <PhoneIcon sx={{color: "#212121"}}/>
                         </IconButton>
@@ -138,324 +195,248 @@ export const HesabbookHome = ({onBooleanChange}) => {
                     </Paper>
                 </Box>
             </Box>
-            <Box sx={{width: '100%', paddingLeft: '30px', marginTop: '20px', display: 'flex'}}>
-                <Box sx={{width: '50%'}}>
-                    <Typography variant="h2" gutterBottom sx={{
-                        margin: '10px', justifyContent: 'center', display: 'flex',
-                        flexDirection: 'column',
-                        marginLeft: '36px', marginTop: '20px', marginBottom: '40px'
-                    }}>
-                        Solutions tailored for your industry</Typography>
-                    <Typography variant="h5" gutterBottom sx={{
-                        margin: '10px',
-                        marginLeft: '50px', justifyContent: 'center', display: 'flex',
-                        flexDirection: 'column'
-                    }}>
-                        No matter what industry you're in, your business is unique. Don't settle for a one-size-fits-all
-                        solution. Sage Intacct is built to suit your industry's specific needs
-                    </Typography>
-                    <Box sx={{width: '100%', display: 'flex'}}>
-                        <Box sx={{width: '50%', marginTop: '20px'}}>
-                            <Typography variant="h6"
-                                        sx={{
-                                            margin: '10px',
-                                            marginLeft: '70px',
-                                            textDecoration: 'underline',
-                                            color: '#23527c'
-                                        }}>
-                                Accountants & CPA firms
-                            </Typography> <Typography variant="h6" sx={{
-                            margin: '10px',
-                            marginLeft: '70px',
-                            textDecoration: 'underline', color: '#23527c'
-                        }}>
-                            Biotech & life sciences
-                        </Typography> <Typography variant="h6" sx={{
-                            margin: '10px',
-                            marginLeft: '70px',
-                            textDecoration: 'underline', color: '#23527c'
-                        }}>
-                            Construction
-                        </Typography> <Typography variant="h6" sx={{
-                            margin: '10px',
-                            marginLeft: '70px',
-                            textDecoration: 'underline', color: '#23527c'
-                        }}>
-                            Contractor
-                        </Typography> <Typography variant="h6" sx={{
-                            margin: '10px',
-                            marginLeft: '70px',
-                            textDecoration: 'underline', color: '#23527c'
-                        }}>
-                            Financial Services
-                        </Typography> <Typography variant="h6" sx={{
-                            margin: '10px',
-                            marginLeft: '70px',
-                            textDecoration: 'underline', color: '#23527c'
-                        }}>
-                            Franchise
-                        </Typography> <Typography variant="h6" sx={{
-                            margin: '10px',
-                            marginLeft: '70px',
-                            textDecoration: 'underline', color: '#23527c'
-                        }}>
-                            Healthcare
+            <Box sx={{padding: '20px', backgroundColor: '#f5f5f5', color: '#333'}}>
+                <Grid container alignItems="center" justifyContent="space-between">
+                    <Grid item xs={12} md={6}>
+                        <Typography variant="h3" component="h1" gutterBottom sx={{color: '#333'}}>
+                            Solutions tailored for your industry
                         </Typography>
-                        </Box>
-                        <Box sx={{width: '50%', marginTop: '20px'}}>
-                            <Typography variant="h6"
-                                        sx={{margin: '10px', textDecoration: 'underline', color: '#23527c'}}>
-                                Hospitality
-                            </Typography> <Typography variant="h6" sx={{
-                            margin: '10px',
-                            textDecoration: 'underline',
-                            color: '#23527c'
-                        }}>
-                            Nonprofit
-                        </Typography> <Typography variant="h6"
-                                                  sx={{margin: '10px', textDecoration: 'underline', color: '#23527c'}}>
-                            Professional services
-                        </Typography> <Typography variant="h6"
-                                                  sx={{margin: '10px', textDecoration: 'underline', color: '#23527c'}}>
-                            Retail
-                        </Typography> <Typography variant="h6"
-                                                  sx={{margin: '10px', textDecoration: 'underline', color: '#23527c'}}>
-                            SaaS & subscription
+                        <Typography variant="body1" sx={{marginBottom: '20px', color: '#666'}}>
+                            No matter what industry you're in, your business is unique. Don't settle for a
+                            one-size-fits-all solution. Sage Intacct is built to suit your industry's specific needs.
                         </Typography>
-                            <Typography variant="h6"
-                                        sx={{margin: '10px', textDecoration: 'underline', color: '#23527c'}}>
-                                Wholesale Distribution
-                            </Typography>
-                            <Typography variant="h6"
-                                        sx={{margin: '10px', textDecoration: 'underline', color: '#23527c'}}>
-                                All industries
-                            </Typography>
+                        <Box sx={{display: 'flex', flexWrap: 'wrap', gap: '10px'}}>
+                            {[
+                                "Accountants & CPA firms",
+                                "Biotech & life sciences",
+                                "Construction",
+                                "Contractor",
+                                "Financial Services",
+                                "Franchise",
+                                "Healthcare",
+                                "Hospitality",
+                                "Nonprofit",
+                                "Professional services",
+                                "Retail",
+                                "SaaS & subscription",
+                                "Wholesale Distribution",
+                                "All industries"
+                            ].map((industry, index) => (
+                                <Link
+                                    key={index}
+                                    href="#"
+                                    underline="hover"
+                                    sx={{fontSize: '1.1rem', color: '#0073e6'}}
+                                >
+                                    {industry}
+                                </Link>
+                            ))}
                         </Box>
-                    </Box>
-                </Box>
-                <Box sx={{width: '50%'}}>
-                    <img src={Industry}/>
-                </Box>
+                    </Grid>
+                    <Grid item xs={12} md={5}>
+                        <Box
+                            component="img"
+                            src={Industry}
+                            alt="Industry Solutions"
+                            sx={{maxWidth: '100%', height: 'auto'}}
+                        />
+                    </Grid>
+                </Grid>
             </Box>
-            <Box align="center">
+
+            <Box align="center" sx={{padding: '20px', backgroundColor: '#f5f5f5'}}>
                 <Typography variant="h2" align="center" sx={{
-                    justifyContent: 'center', display: 'flex',
-                    flexDirection: 'column', marginTop: '20px', marginBottom: '50px'
+                    marginTop: '20px', marginBottom: '50px',
                 }}>
-                    Get more than just great software</Typography>
-                <Typography variant="h5" align="center"
-                            sx={{
-                                justifyContent: 'center', display: 'flex',
-                                flexDirection: 'column', marginTop: '20px', marginBottom: '50px', textWrap: 'break-all'
-                            }}>
+                    Get more than just great software
+                </Typography>
+                <Typography variant="h5" align="center" sx={{
+                    marginBottom: '50px',
+                }}>
                     All Sage customers are part of the Sage community. As a Sage member, you can enjoy benefits,
                     connect with experts and industry peers, and get insights that help you and your business.
                 </Typography>
+                <Grid container spacing={4} justifyContent="center">
+                    {tiers.map((tier, index) => (
+                        <Grid item key={index} xs={12} sm={6} md={4}>
+                            <Card
+                                sx={{
+                                    height: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    border: `2px solid ${tier.color}`,
+                                    transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+                                    '&:hover': {
+                                        borderColor: tier.hoverBorderColor,
+                                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.1)', // Add shadow on hover
+                                    },
+                                }}
+                            >
+                                <CardHeader
+                                    title={tier.title}
+                                    titleTypographyProps={{align: 'center', color: 'white', variant: 'h4'}}
+                                    sx={{backgroundColor: '#212121'}}
+                                />
+                                <CardContent
+                                    sx={{
+                                        flexGrow: 1,
+                                        transition: 'box-shadow 0.3s ease',
+                                        '&:hover': {
+                                            boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // Add shadow to CardContent on hover
+                                        }
+                                    }}
+                                >
+                                    <List>
+                                        {tier.description.map((line, i) => (
+                                            <React.Fragment key={i}>
+                                                <ListItem>
+                                                    <ListItemText primary={line} sx={{textAlign: 'center'}}/>
+                                                </ListItem>
+                                                {i < tier.description.length - 1 && <Divider sx={{
+                                                    backgroundColor: '#212121',
+                                                    height: '2px'  // Increase the thickness of the divider
+                                                }}/>} {/* Add Divider */}
+                                            </React.Fragment>
+                                        ))}
+                                    </List>
+                                    <Divider sx={{
+                                        marginY: 2, backgroundColor: '#212121',
+                                        height: '2px'
+                                    }}/> {/* Divider before price */}
+                                    <Typography variant="h4" align="center" sx={{marginTop: '20px'}}>
+                                        ${tier.price}
+                                    </Typography>
+                                    <Typography variant="subtitle1" align="center" sx={{color: 'text.secondary'}}>
+                                        per month
+                                    </Typography>
+                                </CardContent>
+                                <Box sx={{display: 'flex', justifyContent: 'center', padding: '16px'}}>
+                                    <Button
+                                        variant={tier.buttonVariant}
+                                        color="primary"
+                                        sx={{backgroundColor: tier.buttonVariant === 'contained' ? '#4caf50' : 'inherit'}}
+                                    >
+                                        {tier.buttonText}
+                                    </Button>
+                                </Box>
+                            </Card>
+                        </Grid>
+                    ))}
+                </Grid>
             </Box>
-            <div className="w3-row-padding">
-                <div className="w3-third w3-margin-bottom">
-                    <ul className="w3-ul w3-border w3-center w3-hover-shadow">
-                        <li className="w3-black w3-xlarge w3-padding-32">Silver</li>
-                        <li className="w3-padding-16"><b>10GB</b> Storage</li>
-                        <li className="w3-padding-16"><b>10</b> Emails</li>
-                        <li className="w3-padding-16"><b>10</b> Domains</li>
-                        <li className="w3-padding-16"><b>Endless</b> Support</li>
-                        <li className="w3-padding-16">
-                            <h2 className="w3-wide">$ 10</h2>
-                            <span className="w3-opacity">per month</span>
-                        </li>
-                        <li className="w3-light-grey w3-padding-24">
-                            <button className="w3-button w3-green w3-padding-large">Sign Up</button>
-                        </li>
-                    </ul>
-                </div>
-                <div className="w3-third w3-margin-bottom">
-                    <ul className="w3-ul w3-border w3-center w3-hover-shadow">
-                        <li className="w3-green w3-xlarge w3-padding-32">Gold</li>
-                        <li className="w3-padding-16"><b>25GB</b> Storage</li>
-                        <li className="w3-padding-16"><b>25</b> Emails</li>
-                        <li className="w3-padding-16"><b>25</b> Domains</li>
-                        <li className="w3-padding-16"><b>Endless</b> Support</li>
-                        <li className="w3-padding-16">
-                            <h2 className="w3-wide">$ 25</h2>
-                            <span className="w3-opacity">per month</span>
-                        </li>
-                        <li className="w3-light-grey w3-padding-24">
-                            <button className="w3-button w3-green w3-padding-large">Sign Up</button>
-                        </li>
-                    </ul>
-                </div>
-                <div className="w3-third w3-margin-bottom">
-                    <ul class="w3-ul w3-border w3-center w3-hover-shadow">
-                        <li class="w3-black w3-xlarge w3-padding-32">Platinum</li>
-                        <li class="w3-padding-16"><b>50GB</b> Storage</li>
-                        <li class="w3-padding-16"><b>50</b> Emails</li>
-                        <li class="w3-padding-16"><b>50</b> Domains</li>
-                        <li class="w3-padding-16"><b>Endless</b> Support</li>
-                        <li class="w3-padding-16">
-                            <h2 class="w3-wide">$ 50</h2>
-                            <span class="w3-opacity">per month</span>
-                        </li>
-                        <li class="w3-light-grey w3-padding-24">
-                            <button class="w3-button w3-green w3-padding-large">Sign Up</button>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <Box>
-                <Box
-                    style={{
-                        display: "flex",
-                    }}
-                >
-                    <Box
-                        style={{
-                            display: "flex",
-                            width: "70%",
-                            backgroundColor: "#212121",
-                            color: "green",
-                            paddingBottom: "30px",
-                            paddingTop: "30px",
-                        }}
-                    >
-                        <Box style={{marginLeft: "100px"}}>
-                            <Typography variant="h5">About</Typography>
-                            <Box
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    color: "whitesmoke",
-                                    paddingTop: "10px",
-                                }}
-                            >
-                                <Typography variant="caption"> Contact Us </Typography>
-                                <Typography variant="caption"> About Us </Typography>
-                                <Typography variant="caption"> Careers </Typography>
-                                <Typography variant="caption">HesabBook Stories </Typography>
-                                <Typography variant="caption"> Press </Typography>
-                                <Typography variant="caption"> Corporate Information </Typography>
-                            </Box>
-                        </Box>
-                        <Box style={{marginLeft: "90px"}}>
-                            <Typography variant="h5">Help</Typography>
-                            <Box
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    color: "whitesmoke",
-                                    paddingTop: "10px",
-                                }}
-                            >
-                                <Typography variant="caption"> Payments </Typography>
-                                <Typography variant="caption"> Shipping </Typography>
-                                <Typography variant="caption">Cancellation & Returns</Typography>
-                                <Typography variant="caption"> FAQ </Typography>
-                                <Typography variant="caption"> Report Infringement </Typography>
-                            </Box>
-                        </Box>
-                        <Box style={{marginLeft: "90px"}}>
-                            <Typography variant="h5">Policy</Typography>
-                            <Box
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    color: "whitesmoke",
-                                    paddingTop: "10px",
-                                }}
-                            >
-                                <Typography variant="caption"> Return Policy </Typography>
-                                <Typography variant="caption"> Terms Of Use </Typography>
-                                <Typography variant="caption"> Security </Typography>
-                                <Typography variant="caption"> Privacy </Typography>
-                                <Typography variant="caption"> Sitemap </Typography>
-                                <Typography variant="caption"> EPR Compliance </Typography>
-                            </Box>
-                        </Box>
-                        <Box style={{marginLeft: "90px"}}>
-                            <Typography variant="h5">Social</Typography>
-                            <Box
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    color: "whitesmoke",
-                                    paddingTop: "10px",
-                                }}
-                            >
-                                <Typography variant="caption"> Facebook </Typography>
-                                <Typography variant="caption"> Instagram </Typography>
-                                <Typography variant="caption"> WatsApp </Typography>
-                                <Typography variant="caption"> Telegram </Typography>
-                                <Typography variant="caption"> Twitter </Typography>
-                                <Typography variant="caption"> YouTube </Typography>
-                            </Box>
+            {/*Footer*/}
+            <Box sx={{backgroundColor: '#212121', color: 'whitesmoke', padding: '30px 0'}}>
+                <Box sx={{display: 'flex', justifyContent: 'space-between', padding: '0 100px'}}>
+                    <Box>
+                        <Typography variant="h5" color="green" sx={{marginBottom: '10px'}}>
+                            About
+                        </Typography>
+                        <Box sx={{display: 'flex', flexDirection: 'column', gap: '6px'}}>
+                            <Typography variant="caption" sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Contact
+                                Us</Typography>
+                            <Typography variant="caption" sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>About
+                                Us</Typography>
+                            <Typography variant="caption"
+                                        sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Careers</Typography>
+                            <Typography variant="caption" sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>HesabBook
+                                Stories</Typography>
+                            <Typography variant="caption"
+                                        sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Press</Typography>
+                            <Typography variant="caption" sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Corporate
+                                Information</Typography>
                         </Box>
                     </Box>
-                    <Divider orientation="vertical"/>
-                    <Box
-                        style={{
-                            display: "flex",
-                            width: "30%",
-                            backgroundColor: "#212121",
-                            color: "green",
-                            paddingBottom: "30px",
-                            paddingTop: "30px",
-                        }}
-                    >
-                        <Box style={{marginLeft: "100px"}}>
-                            <Typography>Registered Office Address</Typography>
-                            <Box
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    color: "whitesmoke",
-                                    paddingTop: "10px",
-                                }}
-                            >
-                                <Typography variant="caption" display="block" gutterBottom>
-                                    HesabBook Private Limited,
-                                </Typography>
-                                <Typography variant="caption" display="block" gutterBottom>
-                                    House No-103 ,Ward-24
-                                </Typography>
-                                <Typography variant="caption" display="block" gutterBottom>
-                                    At-Patel Nagar,PO-Phusro
-                                </Typography>
-                                <Typography variant="caption" display="block" gutterBottom>
-                                    PS-Bermo, Dist-Bokaro
-                                </Typography>
-                                <Typography variant="caption" display="block" gutterBottom>
-                                    Jharkhand,829144, India
-                                </Typography>
-                            </Box>
+                    <Box>
+                        <Typography variant="h5" color="green" sx={{marginBottom: '10px'}}>
+                            Help
+                        </Typography>
+                        <Box sx={{display: 'flex', flexDirection: 'column', gap: '6px'}}>
+                            <Typography variant="caption"
+                                        sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Payments</Typography>
+                            <Typography variant="caption"
+                                        sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Shipping</Typography>
+                            <Typography variant="caption" sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Cancellation
+                                & Returns</Typography>
+                            <Typography variant="caption"
+                                        sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>FAQ</Typography>
+                            <Typography variant="caption" sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Report
+                                Infringement</Typography>
+                        </Box>
+                    </Box>
+                    <Box>
+                        <Typography variant="h5" color="green" sx={{marginBottom: '10px'}}>
+                            Policy
+                        </Typography>
+                        <Box sx={{display: 'flex', flexDirection: 'column', gap: '6px'}}>
+                            <Typography variant="caption" sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Return
+                                Policy</Typography>
+                            <Typography variant="caption" sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Terms Of
+                                Use</Typography>
+                            <Typography variant="caption"
+                                        sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Security</Typography>
+                            <Typography variant="caption"
+                                        sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Privacy</Typography>
+                            <Typography variant="caption"
+                                        sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Sitemap</Typography>
+                            <Typography variant="caption" sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>EPR
+                                Compliance</Typography>
+                        </Box>
+                    </Box>
+                    <Box>
+                        <Typography variant="h5" color="green" sx={{marginBottom: '10px'}}>
+                            Social
+                        </Typography>
+                        <Box sx={{display: 'flex', flexDirection: 'column', gap: '6px'}}>
+                            <Typography variant="caption"
+                                        sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Facebook</Typography>
+                            <Typography variant="caption"
+                                        sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Instagram</Typography>
+                            <Typography variant="caption"
+                                        sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>WhatsApp</Typography>
+                            <Typography variant="caption"
+                                        sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Telegram</Typography>
+                            <Typography variant="caption"
+                                        sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Twitter</Typography>
+                            <Typography variant="caption"
+                                        sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>YouTube</Typography>
+                        </Box>
+                    </Box>
+                    <Divider orientation="vertical" flexItem sx={{backgroundColor: 'green', height: 'auto'}}/>
+                    <Box sx={{paddingLeft: '40px'}}>
+                        <Typography variant="h6" color="green">
+                            Registered Office Address
+                        </Typography>
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '6px',
+                            color: 'whitesmoke',
+                            paddingTop: '10px'
+                        }}>
+                            <Typography variant="caption" display="block" gutterBottom>HesabBook Private
+                                Limited,</Typography>
+                            <Typography variant="caption" display="block" gutterBottom>House No-103,
+                                Ward-24</Typography>
+                            <Typography variant="caption" display="block" gutterBottom>At-Patel Nagar,
+                                PO-Phusro</Typography>
+                            <Typography variant="caption" display="block" gutterBottom>PS-Bermo,
+                                Dist-Bokaro</Typography>
+                            <Typography variant="caption" display="block" gutterBottom>Jharkhand, 829144,
+                                India</Typography>
                         </Box>
                     </Box>
                 </Box>
-                <Divider/>
-                <Box
-                    style={{
-                        display: "flex",
-                        paddingBottom: "30px",
-                        paddingTop: "30px",
-                        backgroundColor: "#212121",
-                        color: "whitesmoke",
-                    }}
-                >
-                    <Typography style={{marginLeft: "100px"}}>Accounting & Billing</Typography>
-                    <Typography style={{marginLeft: "100px"}}>Advertise</Typography>
-                    <Typography style={{marginLeft: "100px"}}>Gift Cards</Typography>
-                    <Typography style={{marginLeft: "100px"}}>Help Center</Typography>
-                    <Typography style={{marginLeft: "100px"}}>Q & A</Typography>
-                    <Typography style={{marginLeft: "100px"}}>
-                        @2024-HesabBook.com
-                    </Typography>
+                <Divider sx={{backgroundColor: 'green', marginY: '30px'}}/>
+                <Box sx={{display: 'flex', justifyContent: 'space-around', padding: '0 100px', color: 'whitesmoke'}}>
+                    <Typography sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Accounting & Billing</Typography>
+                    <Typography sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Advertise</Typography>
+                    <Typography sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Gift Cards</Typography>
+                    <Typography sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Help Center</Typography>
+                    <Typography sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>Q & A</Typography>
+                    <Typography sx={{cursor: 'pointer', '&:hover': {color: 'green'}}}>@2024-HesabBook.com</Typography>
                 </Box>
             </Box>
 
-            { /*
-            Drawer open
-            */
-
-            }
             <Transition in={open} timeout={400}>
                 <Modal
                     open={open}
@@ -558,10 +539,7 @@ export const HesabbookHome = ({onBooleanChange}) => {
             </Modal>
         </>
     )
-
-
 }
-
 
 function generateRandomAlphaNumeric(length) {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
